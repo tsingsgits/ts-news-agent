@@ -131,36 +131,7 @@ def build_rows(items):
     return "\n".join(row_parts)
 
 
-def render_html(sections_data, generated_at):
-    tab_buttons = "\n".join(
-        f'''<button class="tab-btn" data-target="{s['id']}" onclick="showSection('{s['id']}')">
-            <span class="glyph">{s['glyph']}</span>{html.escape(s['label'])}
-        </button>'''
-        for s in SECTIONS
-    )
-
-    panels = []
-    for s in SECTIONS:
-        rows = build_rows(sections_data[s["id"]])
-        panels.append(
-            f'''<section class="panel" id="panel-{s['id']}">
-                <div class="panel-head">
-                    <div class="panel-title">{html.escape(s['label'])}</div>
-                    <div class="panel-blurb">{html.escape(s['blurb'])}</div>
-                </div>
-                <ul class="items">{rows}</ul>
-            </section>'''
-        )
-
-    return f'''<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T's News Agent</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+STYLE_BLOCK = """<style>
   :root {
     --bg: #0F1614; --surface: #1D2A25; --border: #2A3530;
     --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
@@ -229,7 +200,53 @@ def render_html(sections_data, generated_at):
     border-top: 1px solid var(--border); padding: 14px 20px; text-align: center;
     font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
   }
-</style>
+</style>"""
+
+SCRIPT_BLOCK = """<script>
+  function showSection(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelector('.tab-btn[data-target="' + id + '"]').classList.add('active');
+    localStorage.setItem('ts-news-active-tab', id);
+  }
+  const saved = localStorage.getItem('ts-news-active-tab') || 'DEFAULT_SECTION_ID';
+  showSection(saved);
+</script>"""
+
+
+def render_html(sections_data, generated_at):
+    tab_buttons = "\n".join(
+        f'''<button class="tab-btn" data-target="{s['id']}" onclick="showSection('{s['id']}')">
+            <span class="glyph">{s['glyph']}</span>{html.escape(s['label'])}
+        </button>'''
+        for s in SECTIONS
+    )
+
+    panels = []
+    for s in SECTIONS:
+        rows = build_rows(sections_data[s["id"]])
+        panels.append(
+            f'''<section class="panel" id="panel-{s['id']}">
+                <div class="panel-head">
+                    <div class="panel-title">{html.escape(s['label'])}</div>
+                    <div class="panel-blurb">{html.escape(s['blurb'])}</div>
+                </div>
+                <ul class="items">{rows}</ul>
+            </section>'''
+        )
+
+    script_block = SCRIPT_BLOCK.replace("DEFAULT_SECTION_ID", SECTIONS[0]["id"])
+
+    head = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T's News Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+{STYLE_BLOCK}
 </head>
 <body>
 <header>
@@ -242,19 +259,12 @@ def render_html(sections_data, generated_at):
 <nav>{tab_buttons}</nav>
 <main>{''.join(panels)}</main>
 <footer>Refreshed automatically once a day via GitHub Actions.</footer>
-<script>
-  function showSection(id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('panel-' + id).classList.add('active');
-    document.querySelector('.tab-btn[data-target="' + id + '"]').classList.add('active');
-    localStorage.setItem('ts-news-active-tab', id);
-  }
-  const saved = localStorage.getItem('ts-news-active-tab') || '{SECTIONS[0]['id']}';
-  showSection(saved);
-</script>
+{script_block}
 </body>
 </html>'''
+    return head
+
+
 
 
 def build_rows_email(items):
