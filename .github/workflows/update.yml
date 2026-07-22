@@ -32,7 +32,7 @@ jobs:
         run: |
           git config user.name "news-agent-bot"
           git config user.email "actions@github.com"
-          git add index.html
+          git add index.html email.html
           git diff --quiet --cached || git commit -m "Daily update: $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
 
@@ -47,4 +47,4 @@ jobs:
           subject: "T's News Agent - daily brief"
           to: ${{ secrets.MAIL_TO }}
           from: "T's News Agent <${{ secrets.MAIL_USERNAME }}>"
-          html_body: file://index.html
+          html_body: file://email.html
