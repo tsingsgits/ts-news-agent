@@ -17,6 +17,10 @@ SECTIONS = [
             ("BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
             ("NPR National", "https://feeds.npr.org/1003/rss.xml"),
             ("NPR Politics", "https://feeds.npr.org/1014/rss.xml"),
+            ("Yahoo News", "https://www.yahoo.com/news/rss"),
+            ("Google News", "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"),
+            ("AP News", "https://news.google.com/rss/search?q=site:apnews.com&hl=en-US&gl=US&ceid=US:en"),
+            ("Reuters", "https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US&ceid=US:en"),
         ],
     },
     {
@@ -25,6 +29,7 @@ SECTIONS = [
         "glyph": "\u25b2",
         "blurb": "US stock market, tech stocks, investment advice",
         "feeds": [
+            ("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
             ("CNBC Markets", "https://www.cnbc.com/id/100003114/device/rss/rss.html"),
             ("MarketWatch Top", "https://www.marketwatch.com/rss/topstories"),
             ("Kiplinger", "https://www.kiplinger.com/feed/all"),
