@@ -35,3 +35,16 @@ jobs:
           git add index.html
           git diff --quiet --cached || git commit -m "Daily update: $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
+
+      - name: Email the page
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "T's News Agent — daily brief"
+          to: ${{ secrets.MAIL_TO }}
+          from: "T's News Agent <${{ secrets.MAIL_USERNAME }}>"
+          html_body: file://index.html
