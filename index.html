@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T's News Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F1614; --surface: #1D2A25; --border: #2A3530;
+    --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
+    --amber: #C08A3E; --sage: #5C7A6E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 20px 20px; max-width: 880px; margin: 0 auto;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: clamp(28px, 5vw, 38px); margin: 0; letter-spacing: -0.01em;
+  }
+  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
+  .updated {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted);
+  }
+  .head-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  nav {
+    max-width: 880px; margin: 0 auto; display: flex; gap: 6px;
+    overflow-x: auto; padding: 14px 20px 0;
+  }
+  .tab-btn {
+    flex-shrink: 0; background: transparent; color: var(--muted2);
+    border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
+    font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn.active { background: var(--surface); color: var(--text); border-color: #C08A3E66; }
+  .tab-btn .glyph { color: var(--sage); }
+  .tab-btn.active .glyph { color: var(--amber); }
+  main { max-width: 880px; margin: 0 auto; padding: 20px 20px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .panel-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  }
+  .panel-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
+  .panel-blurb { font-size: 13px; color: var(--muted2); }
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  .item {
+    border-bottom: 1px solid #1E2622; padding: 16px 0; display: flex; gap: 14px;
+  }
+  .idx {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--sage);
+    min-width: 26px; padding-top: 3px;
+  }
+  .item-link {
+    color: var(--text); text-decoration: none; font-family: 'Fraunces', serif;
+    font-size: 17px; font-weight: 600; line-height: 1.3;
+  }
+  .item-link:hover { color: var(--amber); }
+  .summary { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .meta {
+    margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--sage); display: flex; gap: 10px;
+  }
+  .empty { color: var(--muted2); font-size: 14px; padding: 24px 0; list-style: none; }
+  footer {
+    border-top: 1px solid var(--border); padding: 14px 20px text-align: center;
+    font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="head-row">
+    <h1>T&rsquo;s News Agent</h1>
+    <span class="updated">Updated not yet run</span>
+  </div>
+  <p class="sub">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
+</header>
+<nav><button class="tab-btn" data-target="world" onclick="showSection('world')">
+            <span class="glyph">◈</span>World &amp; US
+        </button>
+<button class="tab-btn" data-target="markets" onclick="showSection('markets')">
+            <span class="glyph">▲</span>Markets
+        </button>
+<button class="tab-btn" data-target="tech" onclick="showSection('tech')">
+            <span class="glyph">◆</span>Tech
+        </button>
+<button class="tab-btn" data-target="home" onclick="showSection('home')">
+            <span class="glyph">●</span>Home Front
+        </button>
+<button class="tab-btn" data-target="career" onclick="showSection('career')">
+            <span class="glyph">▶</span>Career &amp; Growth
+        </button>
+<button class="tab-btn" data-target="outdoors" onclick="showSection('outdoors')">
+            <span class="glyph">▽</span>Outdoors
+        </button></nav>
+<main><section class="panel" id="panel-world">
+                <div class="panel-head">
+                    <div class="panel-title">World &amp; US</div>
+                    <div class="panel-blurb">World news, US news, US politics</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section><section class="panel" id="panel-markets">
+                <div class="panel-head">
+                    <div class="panel-title">Markets</div>
+                    <div class="panel-blurb">US stock market, tech stocks, investment advice</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section><section class="panel" id="panel-tech">
+                <div class="panel-head">
+                    <div class="panel-title">Tech</div>
+                    <div class="panel-blurb">Tech news &amp; the top 5-10 tech companies</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section><section class="panel" id="panel-home">
+                <div class="panel-head">
+                    <div class="panel-title">Home Front</div>
+                    <div class="panel-blurb">Parenting teens &amp; college kids, caring for aging parents</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section><section class="panel" id="panel-career">
+                <div class="panel-head">
+                    <div class="panel-title">Career &amp; Growth</div>
+                    <div class="panel-blurb">Mid-career, leadership, communication</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section><section class="panel" id="panel-outdoors">
+                <div class="panel-head">
+                    <div class="panel-title">Outdoors</div>
+                    <div class="panel-blurb">Hiking news &amp; trail reports</div>
+                </div>
+                <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
+            </section></main>
+<footer>Refreshed automatically once a day via GitHub Actions.</footer>
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelector('.tab-btn[data-target="' + id + '"]').classList.add('active');
+    localStorage.setItem('ts-news-active-tab', id);
+  }
+  const saved = localStorage.getItem('ts-news-active-tab') || 'world';
+  showSection(saved);
+</script>
+</body>
+</html>
