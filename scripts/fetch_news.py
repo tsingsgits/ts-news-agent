@@ -79,6 +79,9 @@ SECTIONS = [
 # First three render as tall tiles; the rest as short tiles in a row beneath them.
 TOP_IDS = ("markets", "world", "tech")
 
+# Public GitHub Pages URL; headings in the email and on the page link here.
+PAGE_URL = "https://tsingsgits.github.io/ts-news-agent/"
+
 MAX_PER_FEED = 6
 
 
@@ -179,6 +182,8 @@ STYLE_BLOCK = """<style>
     font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600;
     display: flex; align-items: center; gap: 8px;
   }
+  .tile-link, .home-link { color: inherit; text-decoration: none; }
+  .tile-link:hover, .home-link:hover { color: var(--amber); }
   .tile-title .glyph { color: var(--amber); font-size: 14px; }
   .tile-title .count {
     margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
@@ -235,7 +240,7 @@ def render_tile(s, items, size):
     count = f"{len(items)} stories" if items else ""
     return f'''<section class="tile {size}" id="tile-{s['id']}">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">{s['glyph']}</span>{html.escape(s['label'])}<span class="count">{count}</span></div>
+                    <div class="tile-title"><span class="glyph">{s['glyph']}</span><a class="tile-link" href="{PAGE_URL}#tile-{s['id']}">{html.escape(s['label'])}</a><span class="count">{count}</span></div>
                     <div class="tile-blurb">{html.escape(s['blurb'])}</div>
                 </div>
                 <ul class="items">{build_rows(items)}</ul>
@@ -261,7 +266,7 @@ def render_html(sections_data, generated_at):
 <body>
 <header>
   <div class="head-row">
-    <h1>T&rsquo;s News Agent</h1>
+    <h1><a class="home-link" href="{PAGE_URL}">T&rsquo;s News Agent</a></h1>
     <span class="updated">Updated {generated_at}</span>
   </div>
   <p class="sub">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
@@ -309,7 +314,7 @@ def render_email_html(sections_data, generated_at):
         blocks.append(
             f'''<section style="margin-bottom:28px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #2A3530;padding-bottom:10px;">
-                    <div style="font-family:Georgia,serif;font-size:20px;font-weight:600;color:#E8E4DA;">{html.escape(s['glyph'])} {html.escape(s['label'])}</div>
+                    <div style="font-family:Georgia,serif;font-size:20px;font-weight:600;color:#E8E4DA;"><a href="{PAGE_URL}#tile-{s['id']}" style="color:#E8E4DA;text-decoration:none;">{html.escape(s['glyph'])} {html.escape(s['label'])} <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:400;color:#C08A3E;">&#8599;</span></a></div>
                 </div>
                 <div style="font-size:13px;color:#7E8B84;margin-bottom:10px;">{html.escape(s['blurb'])}</div>
                 <ul style="list-style:none;margin:0;padding:0;">{rows}</ul>
@@ -326,7 +331,7 @@ def render_email_html(sections_data, generated_at):
 <body style="margin:0;background:#0F1614;color:#E8E4DA;font-family:Arial,Helvetica,sans-serif;">
 <div style="max-width:640px;margin:0 auto;padding:28px 20px 40px;">
   <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid #2A3530;padding-bottom:16px;margin-bottom:20px;">
-    <h1 style="font-family:Georgia,serif;font-weight:700;font-size:30px;margin:0;color:#E8E4DA;">T&rsquo;s News Agent</h1>
+    <h1 style="font-family:Georgia,serif;font-weight:700;font-size:30px;margin:0;"><a href="{PAGE_URL}" style="color:#E8E4DA;text-decoration:none;">T&rsquo;s News Agent</a></h1>
     <span style="font-size:13px;color:#9AA79E;">Updated {generated_at}</span>
   </div>
   <p style="margin:0 0 24px;color:#9AA79E;font-size:14px;">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
