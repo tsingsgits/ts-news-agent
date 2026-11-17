@@ -143,88 +143,83 @@ def build_rows(items):
 
 
 STYLE_BLOCK = """<style>
+  /* Broadsheet: light newsprint, ink-black serif headlines, hairline rules, one red accent. */
   :root {
-    --bg: #0F1614; --surface: #16201C; --surface2: #1D2A25; --border: #2A3530;
-    --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
-    --amber: #C08A3E; --sage: #5C7A6E;
+    --paper: #F4F1EA; --ink: #141414; --rule: #1A1A1A; --hair: #D9D4CA;
+    --muted: #4A4743; --muted2: #6B6762; --faint: #8A857D; --red: #B3261E;
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --sans: 'Libre Franklin', system-ui, -apple-system, sans-serif;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-  }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  a { color: inherit; }
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 24px 24px 18px; max-width: 1360px; margin: 0 auto;
+    max-width: 1360px; margin: 0 auto; padding: 22px 24px 16px;
+    border-bottom: 3px double var(--rule); text-align: center;
+  }
+  .head-row { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .updated {
+    order: -1; font-size: 11px; letter-spacing: .04em; color: var(--muted2);
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 3px 14px;
   }
   h1 {
-    font-family: 'Fraunces', serif; font-weight: 700;
-    font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em;
+    font-family: var(--serif); font-weight: 800; margin: 0; line-height: 1.05;
+    font-size: clamp(34px, 5vw, 56px); letter-spacing: -0.02em;
   }
-  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
-  .updated { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted); }
-  .head-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .home-link { text-decoration: none; }
+  .sub { margin: 6px auto 0; font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--muted); }
   main {
-    max-width: 1360px; margin: 0 auto; padding: 20px 24px 48px;
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+    max-width: 1360px; margin: 0 auto; padding: 18px 24px 48px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .tile {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
   }
+  .tile:nth-child(3n+1) { border-left: 1px solid var(--rule); }
+  .tile:nth-child(-n+3) { border-top: 1px solid var(--rule); }
   .tile.tall { height: 76vh; min-height: 560px; }
   .tile.short { height: 340px; }
-  .tile-head {
-    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
-    background: var(--surface2); flex-shrink: 0;
-  }
+  .tile-head { padding: 14px 16px 10px; border-bottom: 2px solid var(--rule); flex-shrink: 0; }
   .tile-title {
-    font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
+    font-family: var(--serif); font-size: 24px; font-weight: 700;
+    display: flex; align-items: baseline; gap: 8px;
   }
-  .tile-link, .home-link { color: inherit; text-decoration: none; }
-  .tile-link:hover, .home-link:hover { color: var(--amber); }
-  .tile-title .glyph { color: var(--amber); font-size: 14px; }
-  .tile-title .count {
-    margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    font-weight: 400; color: var(--sage);
-  }
-  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+  .tile-title .glyph { display: none; }
+  .tile-link { text-decoration: none; }
+  .tile-link:hover, .home-link:hover, .item-link:hover { color: var(--red); }
+  .tile-title .count { margin-left: auto; font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--red); }
+  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 2px; }
   ul.items {
     list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1;
-    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    scrollbar-width: thin; scrollbar-color: #C9C3B8 transparent;
   }
-  .item { border-bottom: 1px solid #1E2622; padding: 12px 0; display: flex; gap: 10px; }
+  .item { border-bottom: 1px solid var(--hair); padding: 12px 0; display: flex; gap: 10px; }
   .item:last-child { border-bottom: none; }
-  .idx {
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage);
-    min-width: 20px; padding-top: 3px;
-  }
-  .item-link {
-    color: var(--text); text-decoration: none; font-family: 'Fraunces', serif;
-    font-size: 15px; font-weight: 600; line-height: 1.3;
-  }
-  .item-link:hover { color: var(--amber); }
+  .idx { font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--red); min-width: 22px; line-height: 1.3; }
+  .item-link { text-decoration: none; font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.25; }
+  .item:first-child .item-link { font-size: 21px; line-height: 1.18; }
   .summary {
-    margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
+    margin: 5px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .meta { margin-top: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage); }
-  .empty { color: var(--muted2); font-size: 13px; padding: 20px 0; list-style: none; }
+  .meta { margin-top: 5px; font-size: 10.5px; letter-spacing: .03em; color: var(--faint); }
+  .empty { color: var(--muted2); font-family: var(--serif); font-style: italic; font-size: 14px; padding: 20px 0; list-style: none; }
   footer {
-    border-top: 1px solid var(--border); padding: 14px 20px; text-align: center;
-    font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
+    max-width: 1360px; margin: 0 auto; border-top: 3px double var(--rule);
+    padding: 14px 20px; text-align: center; font-size: 12px; color: var(--muted2);
   }
   /* Narrow windows: keep three side-by-side columns, just tighter. */
   @media (max-width: 1000px) {
-    header { padding: 18px 14px 14px; }
-    main { gap: 10px; padding: 14px 12px 32px; }
+    header { padding: 16px 12px 12px; }
+    main { padding: 12px 10px 32px; }
     .tile-head { padding: 10px 10px 8px; }
-    .tile-title { font-size: 16px; }
-    .tile-title .count, .tile-blurb { display: none; }
+    .tile-title { font-size: 18px; }
+    .tile-blurb { display: none; }
     ul.items { padding: 0 10px; }
     .idx { display: none; }
-    .item-link { font-size: 13.5px; }
+    .item-link { font-size: 14px; }
+    .item:first-child .item-link { font-size: 16px; }
     .summary { font-size: 12px; -webkit-line-clamp: 3; }
     .tile.tall { height: 72vh; min-height: 460px; }
     .tile.short { height: 300px; }
@@ -232,6 +227,8 @@ STYLE_BLOCK = """<style>
   /* Phones only: too narrow for three readable columns, so stack. */
   @media (max-width: 560px) {
     main { grid-template-columns: 1fr; }
+    .tile { border-left: 1px solid var(--rule); }
+    .tile:nth-child(n+2) { border-top: none; }
     .tile.tall { height: 70vh; min-height: 0; }
   }
 </style>"""
@@ -260,7 +257,7 @@ def render_html(sections_data, generated_at):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T's News Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;0,6..72,800;1,6..72,400&family=Libre+Franklin:wght@400;500;600&display=swap" rel="stylesheet">
 {STYLE_BLOCK}
 </head>
 <body>
@@ -282,43 +279,49 @@ def build_rows_email(items):
     clients don't reliably apply class-based CSS from <style> blocks."""
     if not items:
         return (
-            '<li style="color:#7E8B84;font-size:14px;padding:24px 0;'
-            'list-style:none;">No dispatches came through for this beat '
-            "on the last run.</li>"
+            '<tr><td style="color:#6B6762;font-family:Georgia,serif;font-style:italic;'
+            'font-size:14px;padding:16px 0;">No dispatches came through for this beat '
+            "on the last run.</td></tr>"
         )
     row_parts = []
     for i, it in enumerate(items):
         ellipsis = "\u2026" if len(it["summary"]) >= 180 else ""
+        size = "20px" if i == 0 else "17px"
+        border = "" if i == len(items) - 1 else "border-bottom:1px solid #D9D4CA;"
         row_parts.append(
-            f'''<li style="border-bottom:1px solid #1E2622;padding:16px 0;list-style:none;">
+            f'''<tr><td style="{border}padding:14px 0;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-            <td style="font-family:monospace;font-size:12px;color:#5C7A6E;vertical-align:top;width:26px;">{str(i+1).zfill(2)}</td>
+            <td style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:#B3261E;vertical-align:top;width:28px;line-height:1.3;">{str(i+1).zfill(2)}</td>
             <td>
-                <a href="{html.escape(it['link'])}" style="color:#E8E4DA;text-decoration:none;font-family:Georgia,serif;font-size:17px;font-weight:600;">{html.escape(it['title'])}</a>
-                <p style="margin:6px 0 0;font-size:14px;color:#9AA79E;line-height:1.5;">{html.escape(it['summary'])}{ellipsis}</p>
-                <div style="margin-top:6px;font-family:monospace;font-size:11px;color:#5C7A6E;">{html.escape(it['source'])}</div>
+                <a href="{html.escape(it['link'])}" style="color:#141414;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:{size};font-weight:700;line-height:1.25;">{html.escape(it['title'])}</a>
+                <p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#4A4743;line-height:1.5;">{html.escape(it['summary'])}{ellipsis}</p>
+                <div style="margin-top:6px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.03em;color:#8A857D;">{html.escape(it['source'])}</div>
             </td>
             </tr></table>
-        </li>'''
+        </td></tr>'''
         )
     return "\n".join(row_parts)
 
 
 def render_email_html(sections_data, generated_at):
-    """Email clients strip <script> tags, so the tabbed JS-driven layout
-    renders as empty. This variant stacks every section, always visible,
-    with no JS or tab nav required, using inline styles throughout."""
+    """Email clients strip <script> and most <style>, so this variant stacks
+    every section with table layout and inline styles, in the Broadsheet look."""
     blocks = []
     for s in SECTIONS:
         rows = build_rows_email(sections_data[s["id"]])
+        count = len(sections_data[s["id"]])
+        count_txt = f"{count} stories" if count else ""
         blocks.append(
-            f'''<section style="margin-bottom:28px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #2A3530;padding-bottom:10px;">
-                    <div style="font-family:Georgia,serif;font-size:20px;font-weight:600;color:#E8E4DA;"><a href="{PAGE_URL}#tile-{s['id']}" style="color:#E8E4DA;text-decoration:none;">{html.escape(s['glyph'])} {html.escape(s['label'])} <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:400;color:#C08A3E;">&#8599;</span></a></div>
-                </div>
-                <div style="font-size:13px;color:#7E8B84;margin-bottom:10px;">{html.escape(s['blurb'])}</div>
-                <ul style="list-style:none;margin:0;padding:0;">{rows}</ul>
-            </section>'''
+            f'''<tr><td style="padding:22px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr><td style="border-bottom:2px solid #1A1A1A;padding-bottom:6px;">
+                  <a href="{PAGE_URL}#tile-{s['id']}" style="color:#141414;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;">{html.escape(s['label'])}</a>
+                  <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#B3261E;padding-left:8px;">{count_txt} &#8599;</span>
+                  <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6B6762;margin-top:2px;">{html.escape(s['blurb'])}</div>
+                </td></tr>
+                {rows}
+              </table>
+            </td></tr>'''
         )
 
     return f'''<!DOCTYPE html>
@@ -326,20 +329,23 @@ def render_email_html(sections_data, generated_at):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
 <title>T's News Agent</title>
 </head>
-<body style="margin:0;background:#0F1614;color:#E8E4DA;font-family:Arial,Helvetica,sans-serif;">
-<div style="max-width:640px;margin:0 auto;padding:28px 20px 40px;">
-  <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid #2A3530;padding-bottom:16px;margin-bottom:20px;">
-    <h1 style="font-family:Georgia,serif;font-weight:700;font-size:30px;margin:0;"><a href="{PAGE_URL}" style="color:#E8E4DA;text-decoration:none;">T&rsquo;s News Agent</a></h1>
-    <span style="font-size:13px;color:#9AA79E;">Updated {generated_at}</span>
-  </div>
-  <p style="margin:0 0 24px;color:#9AA79E;font-size:14px;">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
+<body style="margin:0;padding:0;background:#F4F1EA;color:#141414;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F1EA;"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;padding:24px 20px 36px;">
+  <tr><td align="center" style="border-bottom:3px double #1A1A1A;padding-bottom:14px;">
+    <div style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:.04em;color:#6B6762;border-top:1px solid #1A1A1A;border-bottom:1px solid #1A1A1A;padding:3px 14px;">Updated {generated_at}</div>
+    <h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:38px;line-height:1.1;margin:10px 0 4px;letter-spacing:-.01em;"><a href="{PAGE_URL}" style="color:#141414;text-decoration:none;">T&rsquo;s News Agent</a></h1>
+    <div style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:#4A4743;">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</div>
+  </td></tr>
   {''.join(blocks)}
-  <div style="border-top:1px solid #2A3530;padding-top:14px;text-align:center;font-size:12px;color:#5C7A6E;">
-    Refreshed automatically once a day via GitHub Actions.
-  </div>
-</div>
+  <tr><td align="center" style="border-top:3px double #1A1A1A;margin-top:24px;padding-top:12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6B6762;">
+    <a href="{PAGE_URL}" style="color:#B3261E;text-decoration:none;">Read it on the web &#8599;</a> &middot; Refreshed automatically once a day via GitHub Actions.
+  </td></tr>
+</table>
+</td></tr></table>
 </body>
 </html>'''
 
