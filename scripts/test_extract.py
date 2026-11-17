@@ -16,3 +16,7 @@ for url, title in links:
     print(f"{status:8} {words:5}w  {url[:95]}")
     out.append({"url": url, "title": html.unescape(title), "status": status, "words": words, "text": text or ""})
 json.dump(out, open("probe.json", "w"), indent=1)
+import base64, gzip
+blob = base64.b64encode(gzip.compress(json.dumps(out).encode())).decode()
+for i in range(0, len(blob), 8000):
+    print("PROBEJSON " + blob[i:i+8000])
