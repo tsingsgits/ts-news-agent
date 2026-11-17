@@ -9,6 +9,18 @@ import feedparser
 
 SECTIONS = [
     {
+        "id": "markets",
+        "label": "Markets",
+        "glyph": "\u25b2",
+        "blurb": "US stock market, tech stocks, investment advice",
+        "feeds": [
+            ("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+            ("CNBC Markets", "https://www.cnbc.com/id/100003114/device/rss/rss.html"),
+            ("MarketWatch Top", "https://www.marketwatch.com/rss/topstories"),
+            ("Kiplinger", "https://www.kiplinger.com/feed/all"),
+        ],
+    },
+    {
         "id": "world",
         "label": "World & US",
         "glyph": "\u25c8",
@@ -21,18 +33,6 @@ SECTIONS = [
             ("Google News", "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"),
             ("AP News", "https://news.google.com/rss/search?q=site:apnews.com&hl=en-US&gl=US&ceid=US:en"),
             ("Reuters", "https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US&ceid=US:en"),
-        ],
-    },
-    {
-        "id": "markets",
-        "label": "Markets",
-        "glyph": "\u25b2",
-        "blurb": "US stock market, tech stocks, investment advice",
-        "feeds": [
-            ("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
-            ("CNBC Markets", "https://www.cnbc.com/id/100003114/device/rss/rss.html"),
-            ("MarketWatch Top", "https://www.marketwatch.com/rss/topstories"),
-            ("Kiplinger", "https://www.kiplinger.com/feed/all"),
         ],
     },
     {
@@ -75,6 +75,9 @@ SECTIONS = [
         ],
     },
 ]
+
+# First three render as tall tiles; the rest as short tiles in a row beneath them.
+TOP_IDS = ("markets", "world", "tech")
 
 MAX_PER_FEED = 6
 
@@ -138,7 +141,7 @@ def build_rows(items):
 
 STYLE_BLOCK = """<style>
   :root {
-    --bg: #0F1614; --surface: #1D2A25; --border: #2A3530;
+    --bg: #0F1614; --surface: #16201C; --surface2: #1D2A25; --border: #2A3530;
     --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
     --amber: #C08A3E; --sage: #5C7A6E;
   }
@@ -149,101 +152,103 @@ STYLE_BLOCK = """<style>
   }
   header {
     border-bottom: 1px solid var(--border);
-    padding: 28px 20px 20px; max-width: 880px; margin: 0 auto;
+    padding: 24px 24px 18px; max-width: 1360px; margin: 0 auto;
   }
   h1 {
     font-family: 'Fraunces', serif; font-weight: 700;
-    font-size: clamp(28px, 5vw, 38px); margin: 0; letter-spacing: -0.01em;
+    font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em;
   }
-  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
-  .updated {
-    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted);
-  }
+  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+  .updated { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted); }
   .head-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
-  nav {
-    max-width: 880px; margin: 0 auto; display: flex; gap: 6px;
-    overflow-x: auto; padding: 14px 20px 0;
+  main {
+    max-width: 1360px; margin: 0 auto; padding: 20px 24px 48px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
   }
-  .tab-btn {
-    flex-shrink: 0; background: transparent; color: var(--muted2);
-    border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
-    font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 500;
-    cursor: pointer; display: flex; align-items: center; gap: 6px;
+  .tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    display: flex; flex-direction: column; min-height: 0; overflow: hidden;
   }
-  .tab-btn.active { background: var(--surface); color: var(--text); border-color: #C08A3E66; }
-  .tab-btn .glyph { color: var(--sage); }
-  .tab-btn.active .glyph { color: var(--amber); }
-  main { max-width: 880px; margin: 0 auto; padding: 20px 20px 60px; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .panel-head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  .tile.tall { height: 76vh; min-height: 560px; }
+  .tile.short { height: 340px; }
+  .tile-head {
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+    background: var(--surface2); flex-shrink: 0;
   }
-  .panel-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
-  .panel-blurb { font-size: 13px; color: var(--muted2); }
-  ul.items { list-style: none; margin: 0; padding: 0; }
-  .item {
-    border-bottom: 1px solid #1E2622; padding: 16px 0; display: flex; gap: 14px;
+  .tile-title {
+    font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
   }
+  .tile-title .glyph { color: var(--amber); font-size: 14px; }
+  .tile-title .count {
+    margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    font-weight: 400; color: var(--sage);
+  }
+  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+  ul.items {
+    list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .item { border-bottom: 1px solid #1E2622; padding: 12px 0; display: flex; gap: 10px; }
+  .item:last-child { border-bottom: none; }
   .idx {
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--sage);
-    min-width: 26px; padding-top: 3px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage);
+    min-width: 20px; padding-top: 3px;
   }
   .item-link {
     color: var(--text); text-decoration: none; font-family: 'Fraunces', serif;
-    font-size: 17px; font-weight: 600; line-height: 1.3;
+    font-size: 15px; font-weight: 600; line-height: 1.3;
   }
   .item-link:hover { color: var(--amber); }
-  .summary { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
-  .meta {
-    margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    color: var(--sage); display: flex; gap: 10px;
+  .summary {
+    margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .empty { color: var(--muted2); font-size: 14px; padding: 24px 0; list-style: none; }
+  .meta { margin-top: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage); }
+  .empty { color: var(--muted2); font-size: 13px; padding: 20px 0; list-style: none; }
   footer {
     border-top: 1px solid var(--border); padding: 14px 20px; text-align: center;
     font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
   }
+  /* Narrow windows: keep three side-by-side columns, just tighter. */
+  @media (max-width: 1000px) {
+    header { padding: 18px 14px 14px; }
+    main { gap: 10px; padding: 14px 12px 32px; }
+    .tile-head { padding: 10px 10px 8px; }
+    .tile-title { font-size: 16px; }
+    .tile-title .count, .tile-blurb { display: none; }
+    ul.items { padding: 0 10px; }
+    .idx { display: none; }
+    .item-link { font-size: 13.5px; }
+    .summary { font-size: 12px; -webkit-line-clamp: 3; }
+    .tile.tall { height: 72vh; min-height: 460px; }
+    .tile.short { height: 300px; }
+  }
+  /* Phones only: too narrow for three readable columns, so stack. */
+  @media (max-width: 560px) {
+    main { grid-template-columns: 1fr; }
+    .tile.tall { height: 70vh; min-height: 0; }
+  }
 </style>"""
 
-SCRIPT_BLOCK = """<script>
-  function showSection(id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('panel-' + id).classList.add('active');
-    document.querySelector('.tab-btn[data-target="' + id + '"]').classList.add('active');
-    localStorage.setItem('ts-news-active-tab', id);
-  }
-  const saved = localStorage.getItem('ts-news-active-tab') || 'DEFAULT_SECTION_ID';
-  showSection(saved);
-</script>"""
+def render_tile(s, items, size):
+    count = f"{len(items)} stories" if items else ""
+    return f'''<section class="tile {size}" id="tile-{s['id']}">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">{s['glyph']}</span>{html.escape(s['label'])}<span class="count">{count}</span></div>
+                    <div class="tile-blurb">{html.escape(s['blurb'])}</div>
+                </div>
+                <ul class="items">{build_rows(items)}</ul>
+            </section>'''
 
 
 def render_html(sections_data, generated_at):
-    tab_buttons = "\n".join(
-        f'''<button class="tab-btn" data-target="{s['id']}" onclick="showSection('{s['id']}')">
-            <span class="glyph">{s['glyph']}</span>{html.escape(s['label'])}
-        </button>'''
-        for s in SECTIONS
-    )
+    top = [s for s in SECTIONS if s["id"] in TOP_IDS]
+    bottom = [s for s in SECTIONS if s["id"] not in TOP_IDS]
+    tiles = [render_tile(s, sections_data[s["id"]], "tall") for s in top]
+    tiles += [render_tile(s, sections_data[s["id"]], "short") for s in bottom]
 
-    panels = []
-    for s in SECTIONS:
-        rows = build_rows(sections_data[s["id"]])
-        panels.append(
-            f'''<section class="panel" id="panel-{s['id']}">
-                <div class="panel-head">
-                    <div class="panel-title">{html.escape(s['label'])}</div>
-                    <div class="panel-blurb">{html.escape(s['blurb'])}</div>
-                </div>
-                <ul class="items">{rows}</ul>
-            </section>'''
-        )
-
-    script_block = SCRIPT_BLOCK.replace("DEFAULT_SECTION_ID", SECTIONS[0]["id"])
-
-    head = f'''<!DOCTYPE html>
+    return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -261,15 +266,10 @@ def render_html(sections_data, generated_at):
   </div>
   <p class="sub">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
 </header>
-<nav>{tab_buttons}</nav>
-<main>{''.join(panels)}</main>
+<main>{"".join(tiles)}</main>
 <footer>Refreshed automatically once a day via GitHub Actions.</footer>
-{script_block}
 </body>
 </html>'''
-    return head
-
-
 
 
 def build_rows_email(items):
