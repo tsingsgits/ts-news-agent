@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0F1614; --surface: #1D2A25; --border: #2A3530;
+    --bg: #0F1614; --surface: #16201C; --surface2: #1D2A25; --border: #2A3530;
     --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
     --amber: #C08A3E; --sage: #5C7A6E;
   }
@@ -19,61 +19,82 @@
   }
   header {
     border-bottom: 1px solid var(--border);
-    padding: 28px 20px 20px; max-width: 880px; margin: 0 auto;
+    padding: 24px 24px 18px; max-width: 1360px; margin: 0 auto;
   }
   h1 {
     font-family: 'Fraunces', serif; font-weight: 700;
-    font-size: clamp(28px, 5vw, 38px); margin: 0; letter-spacing: -0.01em;
+    font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em;
   }
-  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
-  .updated {
-    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted);
-  }
+  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+  .updated { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted); }
   .head-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
-  nav {
-    max-width: 880px; margin: 0 auto; display: flex; gap: 6px;
-    overflow-x: auto; padding: 14px 20px 0;
+  main {
+    max-width: 1360px; margin: 0 auto; padding: 20px 24px 48px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
   }
-  .tab-btn {
-    flex-shrink: 0; background: transparent; color: var(--muted2);
-    border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px;
-    font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 500;
-    cursor: pointer; display: flex; align-items: center; gap: 6px;
+  .tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    display: flex; flex-direction: column; min-height: 0; overflow: hidden;
   }
-  .tab-btn.active { background: var(--surface); color: var(--text); border-color: #C08A3E66; }
-  .tab-btn .glyph { color: var(--sage); }
-  .tab-btn.active .glyph { color: var(--amber); }
-  main { max-width: 880px; margin: 0 auto; padding: 20px 20px 60px; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .panel-head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  .tile.tall { height: 76vh; min-height: 560px; }
+  .tile.short { height: 340px; }
+  .tile-head {
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+    background: var(--surface2); flex-shrink: 0;
   }
-  .panel-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
-  .panel-blurb { font-size: 13px; color: var(--muted2); }
-  ul.items { list-style: none; margin: 0; padding: 0; }
-  .item {
-    border-bottom: 1px solid #1E2622; padding: 16px 0; display: flex; gap: 14px;
+  .tile-title {
+    font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
   }
+  .tile-title .glyph { color: var(--amber); font-size: 14px; }
+  .tile-title .count {
+    margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    font-weight: 400; color: var(--sage);
+  }
+  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+  ul.items {
+    list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .item { border-bottom: 1px solid #1E2622; padding: 12px 0; display: flex; gap: 10px; }
+  .item:last-child { border-bottom: none; }
   .idx {
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--sage);
-    min-width: 26px; padding-top: 3px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage);
+    min-width: 20px; padding-top: 3px;
   }
   .item-link {
     color: var(--text); text-decoration: none; font-family: 'Fraunces', serif;
-    font-size: 17px; font-weight: 600; line-height: 1.3;
+    font-size: 15px; font-weight: 600; line-height: 1.3;
   }
   .item-link:hover { color: var(--amber); }
-  .summary { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
-  .meta {
-    margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    color: var(--sage); display: flex; gap: 10px;
+  .summary {
+    margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .empty { color: var(--muted2); font-size: 14px; padding: 24px 0; list-style: none; }
+  .meta { margin-top: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage); }
+  .empty { color: var(--muted2); font-size: 13px; padding: 20px 0; list-style: none; }
   footer {
     border-top: 1px solid var(--border); padding: 14px 20px; text-align: center;
     font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
+  }
+  /* Narrow windows: keep three side-by-side columns, just tighter. */
+  @media (max-width: 1000px) {
+    header { padding: 18px 14px 14px; }
+    main { gap: 10px; padding: 14px 12px 32px; }
+    .tile-head { padding: 10px 10px 8px; }
+    .tile-title { font-size: 16px; }
+    .tile-title .count, .tile-blurb { display: none; }
+    ul.items { padding: 0 10px; }
+    .idx { display: none; }
+    .item-link { font-size: 13.5px; }
+    .summary { font-size: 12px; -webkit-line-clamp: 3; }
+    .tile.tall { height: 72vh; min-height: 460px; }
+    .tile.short { height: 300px; }
+  }
+  /* Phones only: too narrow for three readable columns, so stack. */
+  @media (max-width: 560px) {
+    main { grid-template-columns: 1fr; }
+    .tile.tall { height: 70vh; min-height: 0; }
   }
 </style>
 </head>
@@ -81,328 +102,25 @@
 <header>
   <div class="head-row">
     <h1>T&rsquo;s News Agent</h1>
-    <span class="updated">Updated Nov 17, 2026 03:59 UTC</span>
+    <span class="updated">Updated Nov 17, 2026 05:05 UTC</span>
   </div>
   <p class="sub">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
 </header>
-<nav><button class="tab-btn" data-target="world" onclick="showSection('world')">
-            <span class="glyph">◈</span>World &amp; US
-        </button>
-<button class="tab-btn" data-target="markets" onclick="showSection('markets')">
-            <span class="glyph">▲</span>Markets
-        </button>
-<button class="tab-btn" data-target="tech" onclick="showSection('tech')">
-            <span class="glyph">◆</span>Tech
-        </button>
-<button class="tab-btn" data-target="home" onclick="showSection('home')">
-            <span class="glyph">●</span>Home Front
-        </button>
-<button class="tab-btn" data-target="career" onclick="showSection('career')">
-            <span class="glyph">▶</span>Career &amp; Growth
-        </button>
-<button class="tab-btn" data-target="outdoors" onclick="showSection('outdoors')">
-            <span class="glyph">▽</span>Outdoors
-        </button></nav>
-<main><section class="panel" id="panel-world">
-                <div class="panel-head">
-                    <div class="panel-title">World &amp; US</div>
-                    <div class="panel-blurb">World news, US news, US politics</div>
+<main><section class="tile tall" id="tile-markets">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">▲</span>Markets<span class="count">18 stories</span></div>
+                    <div class="tile-blurb">US stock market, tech stocks, investment advice</div>
                 </div>
                 <ul class="items"><li class="item">
             <span class="idx">01</span>
             <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cry49plv8v3go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Nvidia dismisses &#x27;Bring Jensen Back&#x27; campaign as Trump backs effort to reinstate ex CEO</a>
-                <p class="summary">A number of tech figures have backed an effort asking the AI chip giant to give Jensen Huang his job back.</p>
-                <div class="meta"><span>BBC World</span></div>
+                <a class="item-link" href="https://www.cnbc.com/2026/11/17/iran-war-trump-hormuz-oil-.html" target="_blank" rel="noopener noreferrer">Third U.S. carrier arrives, stoking concerns about renewed conflicts with Iran</a>
+                <p class="summary">Iran has ratcheted up threats against U.S. forces as a third American aircraft carrier arrived in the Gulf, stoking fears of a resumption of military tensions.</p>
+                <div class="meta"><span>CNBC Markets</span></div>
             </div>
         </li>
 <li class="item">
             <span class="idx">02</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMimAFBVV95cUxQanVrQ2NXVWVWRU9LUEZKRVgtajRQRExtNmF1Vzd1dl9YUUhiZTFuX1BfSVI1NEdKUkFWRS0taUN3SmpTU2pCMWhqU2Q0eVlUaW81ZFpGR1dNMWZmaTVZZk9hQmd3WElQd0hTQ003Q3NnaWlxaDFjMVdfN01QSEhPTVlISjFRUnhacjdiaTBsZlI3alVrRDBORQ?oc=5" target="_blank" rel="noopener noreferrer">Horns and drones banned as Shenzhen hushes for Trump and APEC - Reuters</a>
-                <p class="summary">Horns and drones banned as Shenzhen hushes for Trump and APEC  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">03</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiswFBVV95cUxNY0l1bEVvMnNwMHJqM01iVWVDR2JJQmRvaU51TmJQdGRLVnVKUENDTWlLTW5wVEdSVG5uTFEtYktLMUlDWjU4ZXJ3U0ROcjZtMEZNVlZCZFBiMTNGTldnMVBEX09UMkhLS0pQSlVqMmlXMTllMGdxZ3BsU2xrM1lvU0JDWHdSYzh3QjJhRVFUc3N2YW5xLUpXOGNWdG10cTM5R3BYNWtjLTNFN01oaGo2UzVvRQ?oc=5" target="_blank" rel="noopener noreferrer">Trump to kick off Asia trip with Quad talks in Manila ahead of China visit - Reuters</a>
-                <p class="summary">Trump to kick off Asia trip with Quad talks in Manila ahead of China visit  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">04</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMigwFBVV95cUxQbHY5U3ZMUmhWeEViMkJTbW9ObHlQYWRWbmdxWDhXMUdaWFRvLVdRY01oaTJJb3lmOFBiaWpQMEFlTFk5R2ttRnBaT18zaF9Jbk9od2Rza0cyMXJ6Z3JlalJDdG9neTVhQ3pJRG05SE9NQUYxZkFvQmQ5bnVfTi13amFNOA?oc=5" target="_blank" rel="noopener noreferrer">Asia shares slide on tech weakness ahead of Nvidia earnings - Reuters</a>
-                <p class="summary">Asia shares slide on tech weakness ahead of Nvidia earnings  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">05</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiigFBVV95cUxQc2xoSnd5Sm9rYTl5eFVRVzc2MFlNSk5qNUJRckg2X0tVazZEZG4wNTVVYW9JeWNyY1J6TWlKS0VURXd1c1JzUUdYU01WQzhQNWhkOEVCOXo4TTlLSnFNanUzVW9BYkZMOVBSb3ZfRnFMWXZFSGp1ZE5vSF9MTEd3VmxSTGI0YlR1VlE?oc=5" target="_blank" rel="noopener noreferrer">1.5-hour-long system outage forces United Airlines to delay departing flights - AP News</a>
-                <p class="summary">1.5-hour-long system outage forces United Airlines to delay departing flights  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">06</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQa3BfaElNRVdDbTZzUm9TZFpjV0NjYmtjRHF1NzlkWTltQnVCSzBtU0lHdVdGN2ZUcjRreWFacERVZTBzS3dJNF9SbllXcXpFSTViSUdrUm83bzdVOWduLXNhZ3I2WktMMHFYaF9fMnBTcDhfT3FicjA4aFRTNTJmRnV6WGJSX0ZxLUhRVHd2QXlweDNZNHVneDRjU3dvUFpSZWs4VF9VbWFrTl9aczBEZzh4VjVpMDYwWFczTlFB?oc=5" target="_blank" rel="noopener noreferrer">Kremlin dismisses comparisons between trilateral meeting and Yalta conference - Reuters</a>
-                <p class="summary">Kremlin dismisses comparisons between trilateral meeting and Yalta conference  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">07</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMinAFBVV95cUxPT2I5X1NCMDRQZURDMlVFTTY4TmJ1TFVCeUIyWFRuenhhUmV4QTd5ZW9ydEdUaUFXb0dGTVFjR3VubUxvaExsZ3pfWUd2dUw1dEdFbDg5TWhkbEFxNEJydHNtaTgxRnJ1VXRNdjJQY25GSU1NdEZRcG9wUlN0NTJlRHk4QW5WbHk1eV9XOTROU2M3M3N4ZU0wbkxBSTY?oc=5" target="_blank" rel="noopener noreferrer">A technical issue at JPMorgan Chase triggers online banking delays for major US banks - AP News</a>
-                <p class="summary">A technical issue at JPMorgan Chase triggers online banking delays for major US banks  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">08</span>
-            <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cw987343352go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Five EU countries announce migrant deportation centre in Rwanda</a>
-                <p class="summary">Germany, Denmark, Austria, Greece and the Netherlands have announced a &quot;return hub&quot; for failed asylum seekers.</p>
-                <div class="meta"><span>BBC World</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">09</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMie0FVX3lxTE03SEs1dzdtOVl4RVo4TjcxOHpLMmpKZlZ4cGFCQjQtMnV3OWhMSnhvemduUWxJSnlYYWstUk5PYURBSmxLQ2VDY3NyUG9fNXhDTlRwSDFEVFNCN29vWWtOaWRhTDlPYk04TThPOTREX2FVSzhZdEExSVVyQQ?oc=5" target="_blank" rel="noopener noreferrer">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say - CNN</a>
-                <p class="summary">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say  CNNIran ‘plots to target Trump officials with dirty bomb’  The …</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">10</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMi0AFBVV95cUxQbjNVcUhFb0FnR0xEdkR6TWNoMWtqcXRQM3pqazFnUWNqYVpGelR5UE5STnotdW5INnNDVVN6TU94SVdyRnNLLXA3Wm9faWU5clg1YTBnVkhFZEJLTVNXS3puUFp1MFduSTJqNUJ0djE5QXhDa0RzRmNIbTJpTmVkaklnaldyamNQVkptRUo1X3ZEX3UwWjI0NzlkNTBfZzJTc042OTRBYnNZMlFLTkZ4UlZ0QTJyMEhSZ3lJVlk4QjRueVp5bTJLbG81bjBaYlJs?oc=5" target="_blank" rel="noopener noreferrer">Pentagon fails ninth straight audit despite progress in organizing finances - Reuters</a>
-                <p class="summary">Pentagon fails ninth straight audit despite progress in organizing finances  ReutersSee more headlines &amp; perspectives on Google News</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">11</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMirAFBVV95cUxPRUpsOFJNT0Q1TUExNXF1cUJ6b1ExaTFpTFptdnluUVRMR1RvNDFkQlpLa3ZxeUxRM0kxOEJyQVJkeTJIOHBxTjhlQ05nUmp6dVQ2emVBclZ3TTJLbERHeUpRTkIwMmFLaG1VeVA1UU91Yk5UZFFaU2dZVFFCNzY1RXNTRjFCTHhpRGhWQksxQndNNHZZT1hGX1RQMGtVS25GNGQ4T2VmOHZmSHNl?oc=5" target="_blank" rel="noopener noreferrer">Trump approval holds near career low at 32%, Reuters/Ipsos poll finds - Reuters</a>
-                <p class="summary">Trump approval holds near career low at 32%, Reuters/Ipsos poll finds  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">12</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiygFBVV95cUxOdFB1Q2V2UXp6YkZfXzJYWWpmaG5TeUhPcF9LUmNfQ3NkNEFlMi1KT0ppYWJhTXAzZDltRFVIVFJfZnBTcml5dXVxVEozNjBaODdxZTY0M3lMbmtHVFBjYjl5ZFZwMGdwbFZRZkNkbDdxUS0yTU9fX1QwWUlYOElDamk1Q0ZTNHhVTm5HX3k2czVUaTgzd2U5LUN0azdRbEVKNTFZVklxcTk0N0habld1QXFVY0txbGdiejM0ekNFa1lyTzBDcW5Ca1pn?oc=5" target="_blank" rel="noopener noreferrer">Sen. Dan Sullivan campaign says it won’t concede Alaska Senate race until it’s certified - Democracy Docket</a>
-                <p class="summary">Sen. Dan Sullivan campaign says it won’t concede Alaska Senate race until it’s certified  Democracy DocketTrump says Alaska voters chose the wrong Dan Sullivan. What does the data …</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">13</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMirwFBVV95cUxPV0JVRTluN1llSzlnQ3d2ZDRDSFYxYkU4OGhkRUwxWFEwWGNJWlIxaUxSNHVSU1Q2bXJjRkRCbnJZV3U4cHY4WXJvZWJGMG5wdTFkck5Pck9PRVl2TGpoQkZPTDVKS2g5T3kzQ0dCSmdrWm1LaWZaa3RKcFNtekRmdmhpNTBaUWVtMkxvdUhFQ2VET3p2Y2lKdFdRZloyS2p4ZnZQTnZJNVE1OTlpc2dn?oc=5" target="_blank" rel="noopener noreferrer">United Airlines says technology outage that delayed departures has been resolved - Reuters</a>
-                <p class="summary">United Airlines says technology outage that delayed departures has been resolved  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">14</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042920/california-sues-openai-hugging-face-hacking-incident" target="_blank" rel="noopener noreferrer">California sues OpenAI over hacking risks</a>
-                <p class="summary">The state&#x27;s attorney general started investigating OpenAI after the Hugging Face attack and now says this attack was &quot;entirely foreseeable&quot; due to OpenAI&#x27;s poor security practices.…</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">15</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiuAFBVV95cUxPOFRscFU2Tnd4dkpNWURqN2NDcEg1eHBNUW9VTTd5YkRBNlA2eVJkV0xsWHpqNExCek4xTUY0VlU5TjJYM1ZJaWE3YkVNZndhUE5CamYyZlh3WGhRUHhUVzhDRW1IUkVTXzBBQ1hXMTkzM0tiNF9DZGpZcUlTb0xQOFBsVEM1VDhnV0taSlpYYTNsQUpyMnlKQzNSenU3alBia0ZJR1QyQ2hSX3g5bG1yX3d3dTBublY1?oc=5" target="_blank" rel="noopener noreferrer">US to curb China&#x27;s access to AI chips as Trump heads to Asia - Reuters</a>
-                <p class="summary">US to curb China&#x27;s access to AI chips as Trump heads to Asia  ReutersChip tensions loom over Trump-Xi summit, as US and China push AI safety steps  ReutersTrump’s Asia trip: Deals …</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">16</span>
-            <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cmy97qperq9eo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Houthi rebel advance in Yemen may further destabilise global economy</a>
-                <p class="summary">The Iran-backed Houthis are gaining ground and their advance could have dangerous consequences, writes the BBC&#x27;s security correspondent.</p>
-                <div class="meta"><span>BBC World</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">17</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiugFBVV95cUxQQjJvYS1xZnR2SHVwMWtsbzRCNHZQbTF1WWNsczNVaXBGNFA1TjRiUzNESW8waVpfaENtOFBPQzVlckFKeExUWTE3MjhnMTROMDNSNkx1TGdMcDVzWGtyV2k1TmRGVlo1bWRlb1MxT25VX0lYTjk2STlBSGU5Wm1HUFRkYnQyNndBWUkwM3dBODlpcWMtazV3a3FEN1dfUkQxa1I4VlNfVUNZVG1rZFZUMEtvTWdfczJpTVHSAb8BQVVfeXFMTS12Slk0M1R2eXZfTWYtODh0bXdyY1h1UXhUT09fdjhXSXpDZE92ZkR5NTFVU2lNMlZSaENFU0N1UHIwd0g2bi0yWUgwbzc5RVpaMDR0UGlVRnB0RGltV21jcHpHWm43QUhhR1Y2c3VsaUw5NGZPUjZoUVRWZWMtLTQ0MlI5UEZuNzF4RDFtcjBMZTQ2VXVOOUpHREZ5V3czRUxBVllqTEtpYmc4ZDVLVGpBRlJmb2tJRXZjaDBqRk0?oc=5" target="_blank" rel="noopener noreferrer">Photos: California residents gather to watch massive El Nino-fuelled waves - Al Jazeera</a>
-                <p class="summary">Photos: California residents gather to watch massive El Nino-fuelled waves  Al JazeeraHuge waves pummel the California coast, forcing the closure of iconic piers  AP NewsMonster wa…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">18</span>
-            <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/articles/c5n4exg1kkmyo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Forensic expert says his analysis of autopsy photos suggests Epstein was killed</a>
-                <p class="summary">Professor Michael Freeman tells BBC Newsnight that he believes the convicted sex offender&#x27;s injuries are consistent with a homicide.</p>
-                <div class="meta"><span>BBC World</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">19</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMimwFBVV95cUxNNVlEQlFmLS1NdUs1bFBhb0lMMkMzbFQ4b3RmdVFRQUpqTUc3QjBOWGxYZmZXWlBzR1g3aDFJX0pla08xMmVfcUc3SlFVb0NRQnFyZHhEektyZnNtdmdOTGttYjI1YldCNEFvOWhMdHdZM2M5TjhVcjJRWkFBWl82d1o1YzRFQ1dJMmR2Mm9BaGNvbVNTVG53MXBOaw?oc=5" target="_blank" rel="noopener noreferrer">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding - AP News</a>
-                <p class="summary">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">20</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMif0FVX3lxTFA3WVdwdnRSYW5oWmtlN1hsVXVZUV91UVR3bi02WEdFYXV0cHAyckFqNGhhRjVmWjZaWlNQYW5VM185akwyZjgzQmFhZzZWVlFoY3FUcXNmbmNObmNOQWlxUGVmc19kNXJmZmlqcW84V280ajE1d0RZWVFPczlKVXM?oc=5" target="_blank" rel="noopener noreferrer">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig - AP News</a>
-                <p class="summary">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">21</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNSFM1anhXXzhKZlJuOU9wdWtZcGt5ZVVNclJ4am01NXJrTGJPeTRkZGlZZ252Zk9RWjVmTlRlQzZBVTJ5cmhKUG00TF9lWXp3N0xiNzVNUWZIRFVGRUtmNzNXZ0lfYVo5ZDM3OS00d1BuR3I4a1I5YlJEeGZVSTA0YUVSWXZ4WFFES0hQeFNYTGpmUGZuQk1rRXZjLWVhZmhCNzdDVDNn?oc=5" target="_blank" rel="noopener noreferrer">Doctors are raising concerns about US babies born with measles - AP News</a>
-                <p class="summary">Doctors are raising concerns about US babies born with measles  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">22</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042883/nvidia-jensen-huang-commerce-department" target="_blank" rel="noopener noreferrer">U.S. tightens controls on remote access to AI technology amid Nvidia fallout</a>
-                <p class="summary">The new rule closes a loophole that existed that allowed Chinese companies to still access advanced AI chips remotely, despite U.S. restrictions on their physical sale to China.</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">23</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiogFBVV95cUxNTXhlVy1lNkh3XzNRSXRLSTVlZUJybGJKdGtnT1RvTjRsVTVOUXd3OXVPbkxVa1hXcFp3eDhUUEFLWnFLZ0lNUXVvRURaekNndi1ESk5UMk45OC1TRjQ2aFYwOC0xNVpjY043M0ZpWHdEdkRmM0phNW5MVzBkejl6eVJVSDBIQk1wMWR2ZUlWdU9xQjVEaF9JV2hraWNYWmlwbWc?oc=5" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face March retrial in deaths of her 3 children - AP News</a>
-                <p class="summary">Lindsay Clancy to face March retrial in deaths of her 3 children  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">24</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042548/un-killer-robots-ai-weapons-drones" target="_blank" rel="noopener noreferrer">U.N. talks seek to rein in &#x27;killer robots&#x27; as fears over AI weapons grow</a>
-                <p class="summary">Countries are meeting in Geneva to negotiate rules on weapons that can select and kill targets without human intervention. But with the U.S., Russia and Israel resisting legally bi…</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">25</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxPSjlaZkpPNkEtbkFFT0ViblR2UkVybVVoNDd4bk1YZWttWFB3X01vZ1B1dGdqYjRXMGdyQ2VPdEh6bnpXWUthUlMtaUMtZWNyVTZic3l0ZDJSa1Y5WWp5V1VFUVlDSVFoMDZObVI2UHNPeEZnTG5fdHo5ak5TdDBtNHp1cWh4RXR0T21N?oc=5" target="_blank" rel="noopener noreferrer">Five European Countries Plan to Deport Migrants to Rwanda - The New York Times</a>
-                <p class="summary">Five European Countries Plan to Deport Migrants to Rwanda  The New York TimesFive EU countries announce migrant deportation centre in Rwanda  BBCFive European countries plan to ope…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">26</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
-                <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">27</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
-                <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">28</span>
-            <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/videos/cmd91xjd9zk2o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">When will we see Robert Pattinson as Bond in cinemas?</a>
-                <p class="summary">Robert Pattinson has been announced as the next James Bond, becoming the seventh actor to take up the mantle of 007.</p>
-                <div class="meta"><span>BBC World</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">29</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
-                <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">30</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
-                <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">31</span>
-            <div>
-                <a class="item-link" href="https://www.bbc.co.uk/news/articles/ckx27v6dpjz0o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Landmark Crimea bridge hit as Russia reports biggest Ukrainian drone attack of war</a>
-                <p class="summary">Russia said Ukraine had launched over 2,000 drones over the course of a day, while Kyiv came under a record 17 air raid alerts.</p>
-                <div class="meta"><span>BBC World</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">32</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/g-s1-153841/up-first-newsletter-faa-ground-stop-democratic-leaders-congress-trump-asia-trip" target="_blank" rel="noopener noreferrer">FAA ground stop still affecting thousands of flights. And, Trump meets Xi, Putin in Asia</a>
-                <p class="summary">U.S. Transportation Secretary Sean Duffy said that things could be back to normal at the end of Monday after an FAA ground stop disrupted flights. And, Trump heads to Asia for a hi…</p>
-                <div class="meta"><span>NPR Politics</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">33</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6041644/air-traffic-controllers-union-head-on-the-nationwide-ground-stop" target="_blank" rel="noopener noreferrer">Air traffic controllers&#x27; union head on the nationwide ground stop</a>
-                <p class="summary">NPR&#x27;s Steve Inskeep asks the head of the air traffic controllers&#x27; union what it was like for controllers as the FAA issued a nationwide ground stop.</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">34</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6020923/arctic-bird-migration-alaska-climate-change" target="_blank" rel="noopener noreferrer">These birds fly 17,000 miles every year. Climate change could make it harder</a>
-                <p class="summary">Migratory birds cross the entire globe, carefully timing their journeys with the seasons. In a hotter climate, that timing is increasingly out of sync.</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">35</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6034048/snap-san-diego-food-assistance" target="_blank" rel="noopener noreferrer">They saw people losing food benefits. So they started handing out free groceries</a>
-                <p class="summary">The cuts and changes to SNAP have been difficult for government workers who take pride in helping others. In San Diego, workers said they couldn&#x27;t sit back while their neighbors we…</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">36</span>
-            <div>
-                <a class="item-link" href="https://www.npr.org/2026/11/13/nx-s1-6034941/affordability-childcare-midterms" target="_blank" rel="noopener noreferrer">Affordability was a key issue for midterm voters. It helped make childcare one, too</a>
-                <p class="summary">Childcare costs have surged, putting a major financial burden on U.S. families. Advocates say the subject once on the fringes of political debate became a major issue during the mi…</p>
-                <div class="meta"><span>NPR National</span></div>
-            </div>
-        </li></ul>
-            </section><section class="panel" id="panel-markets">
-                <div class="panel-head">
-                    <div class="panel-title">Markets</div>
-                    <div class="panel-blurb">US stock market, tech stocks, investment advice</div>
-                </div>
-                <ul class="items"><li class="item">
-            <span class="idx">01</span>
             <div>
                 <a class="item-link" href="https://www.marketwatch.com/story/im-in-my-40s-should-i-accept-a-lower-pension-in-exchange-for-naming-my-husband-or-child-as-a-beneficiary-b2352059?mod=mw_rss_topstories" target="_blank" rel="noopener noreferrer">I’m in my 40s. Should I accept a lower pension in exchange for naming my husband or child as a beneficiary?</a>
                 <p class="summary">“If I die before my husband, he will receive a lifetime pension equal to 50%–66% of my monthly benefit.”</p>
@@ -410,7 +128,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">02</span>
+            <span class="idx">03</span>
             <div>
                 <a class="item-link" href="https://www.cnbc.com/2026/11/16/kevin-warsh-fed-ai-jobs-productivity-interest-rateshtml.html" target="_blank" rel="noopener noreferrer">Analysis: The Fed&#x27;s chairman sees an AI revolution coming. Now he has to figure out what it means</a>
                 <p class="summary">Kevin Warsh sees AI at a turning point. He faces tough questions on jobs and interest rates.</p>
@@ -418,7 +136,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">03</span>
+            <span class="idx">04</span>
             <div>
                 <a class="item-link" href="https://www.marketwatch.com/story/united-airlines-suffers-system-outage-amid-lingering-faa-ground-stop-delays-5e33f94c?mod=mw_rss_topstories" target="_blank" rel="noopener noreferrer">United Airlines resolves system outage that delayed flights Monday</a>
                 <p class="summary">The outage came just days after an FAA ground stop disrupted air travel nationally.</p>
@@ -426,7 +144,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">04</span>
+            <span class="idx">05</span>
             <div>
                 <a class="item-link" href="https://www.marketwatch.com/story/stanley-druckenmiller-dumped-these-chip-stocks-while-buying-into-spacex-and-palantir-9ae1f078?mod=mw_rss_topstories" target="_blank" rel="noopener noreferrer">Stanley Druckenmiller dumped these chip stocks while buying into SpaceX and Palantir</a>
                 <p class="summary">Druckenmiller’s family office unloaded AMD and Sandisk shares in the third quarter.</p>
@@ -434,7 +152,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">05</span>
+            <span class="idx">06</span>
             <div>
                 <a class="item-link" href="https://www.cnbc.com/2026/11/16/situational-awareness-aschenbrenner-new-ai-bets.html" target="_blank" rel="noopener noreferrer">Aschenbrenner’s Situational Awareness made AI bets again before October rout</a>
                 <p class="summary">Leopold Aschenbrenner&#x27;s hedge fund, which almost collapsed over the summer, bought AI stocks before shares began tumbling.</p>
@@ -442,19 +160,11 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">06</span>
+            <span class="idx">07</span>
             <div>
                 <a class="item-link" href="https://www.marketwatch.com/story/do-amazons-black-friday-deals-really-save-you-money-03859cf3?mod=mw_rss_topstories" target="_blank" rel="noopener noreferrer">Do Amazon’s Black Friday deals really save you money? A new report casts doubt.</a>
                 <p class="summary">Almost a third of Amazon Black Friday deals “provided no savings at all” in the last two years, a report says. The retailer is pushing back.</p>
                 <div class="meta"><span>MarketWatch Top</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">07</span>
-            <div>
-                <a class="item-link" href="https://www.cnbc.com/2026/11/16/berkshire-hathaway-raised-its-stake-in-delta-air-in-the-third-quarter.html" target="_blank" rel="noopener noreferrer">Berkshire Hathaway raised its stake in Delta in the third quarter. It also trimmed a key bank holding</a>
-                <p class="summary">Berkshire Hathaway added to several stock positions in the third quarter while trimming others, including Bank of America.</p>
-                <div class="meta"><span>CNBC Markets</span></div>
             </div>
         </li>
 <li class="item">
@@ -545,10 +255,303 @@
                 <div class="meta"><span>Kiplinger</span></div>
             </div>
         </li></ul>
-            </section><section class="panel" id="panel-tech">
-                <div class="panel-head">
-                    <div class="panel-title">Tech</div>
-                    <div class="panel-blurb">Tech news &amp; the top 5–10 tech companies</div>
+            </section><section class="tile tall" id="tile-world">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">◈</span>World &amp; US<span class="count">36 stories</span></div>
+                    <div class="tile-blurb">World news, US news, US politics</div>
+                </div>
+                <ul class="items"><li class="item">
+            <span class="idx">01</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMikAFBVV95cUxOcGw5a2lMb1B2bEtyYWotSkJYcWhXNHN2R3lwQlNuSUxfSHB5VzJ4Y25wNjZvcnVMLWhlN01rNnM3LXo2OHVScndJZm5VRWhjVFNrNnJZZDRhdEpoSThDelpzbDJlMTB0QXZ2al9FLWFkS3JTU1FfaFpBVkp1X2lrMU93bU5FbzlIQl9qbzFQLXE?oc=5" target="_blank" rel="noopener noreferrer">Trump’s Asia trip: Deals in Manila and Shenzhen, nuclear summit with Xi and Putin, maybe Kim meeting - AP News</a>
+                <p class="summary">Trump’s Asia trip: Deals in Manila and Shenzhen, nuclear summit with Xi and Putin, maybe Kim meeting  AP NewsUS to curb China&#x27;s access to AI chips as Trump heads to Asia  ReutersWo…</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">02</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMiW0FVX3lxTE1vbXFXUWsxanRDclZUbV9abTdzc2VfT0xBSjU1d0JDUGI4bUVRZ0Ryc2dweWRoOVF5b2o0bGlkbkdXXzd1S2sxdFRtWnNQUnIyZktFMzg5dlJCUUk?oc=5" target="_blank" rel="noopener noreferrer">Trump says Alaska voters chose the wrong Dan Sullivan. What does the data show? - BBC</a>
+                <p class="summary">Trump says Alaska voters chose the wrong Dan Sullivan. What does the data show?  BBCPeltola expands lead over Sullivan in latest ballot drop  The HillAlaska Senate race heads for D…</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">03</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cry49plv8v3go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Nvidia dismisses &#x27;Bring Jensen Back&#x27; campaign as Trump backs effort to reinstate ex CEO</a>
+                <p class="summary">A number of tech figures have backed an effort asking the AI chip giant to give Jensen Huang his job back.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">04</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMimAFBVV95cUxQanVrQ2NXVWVWRU9LUEZKRVgtajRQRExtNmF1Vzd1dl9YUUhiZTFuX1BfSVI1NEdKUkFWRS0taUN3SmpTU2pCMWhqU2Q0eVlUaW81ZFpGR1dNMWZmaTVZZk9hQmd3WElQd0hTQ003Q3NnaWlxaDFjMVdfN01QSEhPTVlISjFRUnhacjdiaTBsZlI3alVrRDBORQ?oc=5" target="_blank" rel="noopener noreferrer">Horns and drones banned as Shenzhen hushes for Trump and APEC - Reuters</a>
+                <p class="summary">Horns and drones banned as Shenzhen hushes for Trump and APEC  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">05</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxPb0Z6TDRSbVp3QXhMLUlLR3Vaam5aam1wVW9LV2tGSmJPZVFaU2dCNnhzVjJSY25lNWR3N1lmOFVPeno3UWpkamE2SDVxOVVfcUxUY0RxYTd5cm8wYzg0M1FVZTdrVXU2RXJzbXFmNElPb0ZqVVJ2WUxhS1B5WXVhRFFobUJPb2FaNzdsdlFkNmludUtnSXY3eUJoZ0J5UXFJdTlQUVhR?oc=5" target="_blank" rel="noopener noreferrer">US dollar hits 19-month peak on Fed hike bets; Aussie dips - Reuters</a>
+                <p class="summary">US dollar hits 19-month peak on Fed hike bets; Aussie dips  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">06</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMiswFBVV95cUxNY0l1bEVvMnNwMHJqM01iVWVDR2JJQmRvaU51TmJQdGRLVnVKUENDTWlLTW5wVEdSVG5uTFEtYktLMUlDWjU4ZXJ3U0ROcjZtMEZNVlZCZFBiMTNGTldnMVBEX09UMkhLS0pQSlVqMmlXMTllMGdxZ3BsU2xrM1lvU0JDWHdSYzh3QjJhRVFUc3N2YW5xLUpXOGNWdG10cTM5R3BYNWtjLTNFN01oaGo2UzVvRQ?oc=5" target="_blank" rel="noopener noreferrer">Trump to kick off Asia trip with Quad talks in Manila ahead of China visit - Reuters</a>
+                <p class="summary">Trump to kick off Asia trip with Quad talks in Manila ahead of China visit  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">07</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMigwFBVV95cUxQbHY5U3ZMUmhWeEViMkJTbW9ObHlQYWRWbmdxWDhXMUdaWFRvLVdRY01oaTJJb3lmOFBiaWpQMEFlTFk5R2ttRnBaT18zaF9Jbk9od2Rza0cyMXJ6Z3JlalJDdG9neTVhQ3pJRG05SE9NQUYxZkFvQmQ5bnVfTi13amFNOA?oc=5" target="_blank" rel="noopener noreferrer">Asia shares slide on tech weakness ahead of Nvidia earnings - Reuters</a>
+                <p class="summary">Asia shares slide on tech weakness ahead of Nvidia earnings  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">08</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMiigFBVV95cUxQc2xoSnd5Sm9rYTl5eFVRVzc2MFlNSk5qNUJRckg2X0tVazZEZG4wNTVVYW9JeWNyY1J6TWlKS0VURXd1c1JzUUdYU01WQzhQNWhkOEVCOXo4TTlLSnFNanUzVW9BYkZMOVBSb3ZfRnFMWXZFSGp1ZE5vSF9MTEd3VmxSTGI0YlR1VlE?oc=5" target="_blank" rel="noopener noreferrer">1.5-hour-long system outage forces United Airlines to delay departing flights - AP News</a>
+                <p class="summary">1.5-hour-long system outage forces United Airlines to delay departing flights  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">09</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQa3BfaElNRVdDbTZzUm9TZFpjV0NjYmtjRHF1NzlkWTltQnVCSzBtU0lHdVdGN2ZUcjRreWFacERVZTBzS3dJNF9SbllXcXpFSTViSUdrUm83bzdVOWduLXNhZ3I2WktMMHFYaF9fMnBTcDhfT3FicjA4aFRTNTJmRnV6WGJSX0ZxLUhRVHd2QXlweDNZNHVneDRjU3dvUFpSZWs4VF9VbWFrTl9aczBEZzh4VjVpMDYwWFczTlFB?oc=5" target="_blank" rel="noopener noreferrer">Kremlin dismisses comparisons between trilateral meeting and Yalta conference - Reuters</a>
+                <p class="summary">Kremlin dismisses comparisons between trilateral meeting and Yalta conference  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">10</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMinAFBVV95cUxPT2I5X1NCMDRQZURDMlVFTTY4TmJ1TFVCeUIyWFRuenhhUmV4QTd5ZW9ydEdUaUFXb0dGTVFjR3VubUxvaExsZ3pfWUd2dUw1dEdFbDg5TWhkbEFxNEJydHNtaTgxRnJ1VXRNdjJQY25GSU1NdEZRcG9wUlN0NTJlRHk4QW5WbHk1eV9XOTROU2M3M3N4ZU0wbkxBSTY?oc=5" target="_blank" rel="noopener noreferrer">A technical issue at JPMorgan Chase triggers online banking delays for major US banks - AP News</a>
+                <p class="summary">A technical issue at JPMorgan Chase triggers online banking delays for major US banks  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">11</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNbEt5Qmw1b2g3dmlvTmZ4ME9CeWt4RlBadWs3UTdNYkNJTExyX2JPRXJYZy04SndvUjFSUi1wZFdBM0IxdFpTbHI3Y1R6aU9yeExuRmJSU0lyT2d1TGlDWnFZYVI1ZlFnWE5ZM1Jxb1U3VURrVkhEaW1yeWxWNkVxVGlSb3VUY05CbkhabUc1ZGZWNkRWa2ZjTE5RTGI0T1Q4UWdBMjNn?oc=5" target="_blank" rel="noopener noreferrer">Trump bristles at criticism over grounding of planes, blaming old tech and Biden for the problems - AP News</a>
+                <p class="summary">Trump bristles at criticism over grounding of planes, blaming old tech and Biden for the problems  AP NewsShowdown looms between Trump and Democrats over air traffic control meltdo…</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">12</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cw987343352go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Five EU countries announce migrant deportation centre in Rwanda</a>
+                <p class="summary">Germany, Denmark, Austria, Greece and the Netherlands have announced a &quot;return hub&quot; for failed asylum seekers.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">13</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMie0FVX3lxTE03SEs1dzdtOVl4RVo4TjcxOHpLMmpKZlZ4cGFCQjQtMnV3OWhMSnhvemduUWxJSnlYYWstUk5PYURBSmxLQ2VDY3NyUG9fNXhDTlRwSDFEVFNCN29vWWtOaWRhTDlPYk04TThPOTREX2FVSzhZdEExSVVyQQ?oc=5" target="_blank" rel="noopener noreferrer">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say - CNN</a>
+                <p class="summary">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say  CNNWhite House Says ‘No Credible Threat’ After Iran Dirty Bomb …</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">14</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMirwFBVV95cUxPV0JVRTluN1llSzlnQ3d2ZDRDSFYxYkU4OGhkRUwxWFEwWGNJWlIxaUxSNHVSU1Q2bXJjRkRCbnJZV3U4cHY4WXJvZWJGMG5wdTFkck5Pck9PRVl2TGpoQkZPTDVKS2g5T3kzQ0dCSmdrWm1LaWZaa3RKcFNtekRmdmhpNTBaUWVtMkxvdUhFQ2VET3p2Y2lKdFdRZloyS2p4ZnZQTnZJNVE1OTlpc2dn?oc=5" target="_blank" rel="noopener noreferrer">United Airlines says technology outage that delayed departures has been resolved - Reuters</a>
+                <p class="summary">United Airlines says technology outage that delayed departures has been resolved  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">15</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042920/california-sues-openai-hugging-face-hacking-incident" target="_blank" rel="noopener noreferrer">California sues OpenAI over hacking risks</a>
+                <p class="summary">The state&#x27;s attorney general started investigating OpenAI after the Hugging Face attack and now says this attack was &quot;entirely foreseeable&quot; due to OpenAI&#x27;s poor security practices.…</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">16</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/articles/cmy97qperq9eo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Houthi rebel advance in Yemen may further destabilise global economy</a>
+                <p class="summary">The Iran-backed Houthis are gaining ground and their advance could have dangerous consequences, writes the BBC&#x27;s security correspondent.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">17</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/articles/c5n4exg1kkmyo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Forensic expert says his analysis of autopsy photos suggests Epstein was killed</a>
+                <p class="summary">Professor Michael Freeman tells BBC Newsnight that he believes the convicted sex offender&#x27;s injuries are consistent with a homicide.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">18</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNSFM1anhXXzhKZlJuOU9wdWtZcGt5ZVVNclJ4am01NXJrTGJPeTRkZGlZZ252Zk9RWjVmTlRlQzZBVTJ5cmhKUG00TF9lWXp3N0xiNzVNUWZIRFVGRUtmNzNXZ0lfYVo5ZDM3OS00d1BuR3I4a1I5YlJEeGZVSTA0YUVSWXZ4WFFES0hQeFNYTGpmUGZuQk1rRXZjLWVhZmhCNzdDVDNn?oc=5" target="_blank" rel="noopener noreferrer">Doctors are raising concerns about US babies born with measles - AP News</a>
+                <p class="summary">Doctors are raising concerns about US babies born with measles  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">19</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMimwFBVV95cUxNNVlEQlFmLS1NdUs1bFBhb0lMMkMzbFQ4b3RmdVFRQUpqTUc3QjBOWGxYZmZXWlBzR1g3aDFJX0pla08xMmVfcUc3SlFVb0NRQnFyZHhEektyZnNtdmdOTGttYjI1YldCNEFvOWhMdHdZM2M5TjhVcjJRWkFBWl82d1o1YzRFQ1dJMmR2Mm9BaGNvbVNTVG53MXBOaw?oc=5" target="_blank" rel="noopener noreferrer">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding - AP News</a>
+                <p class="summary">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">20</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMif0FVX3lxTFA3WVdwdnRSYW5oWmtlN1hsVXVZUV91UVR3bi02WEdFYXV0cHAyckFqNGhhRjVmWjZaWlNQYW5VM185akwyZjgzQmFhZzZWVlFoY3FUcXNmbmNObmNOQWlxUGVmc19kNXJmZmlqcW84V280ajE1d0RZWVFPczlKVXM?oc=5" target="_blank" rel="noopener noreferrer">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig - AP News</a>
+                <p class="summary">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">21</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042883/nvidia-jensen-huang-commerce-department" target="_blank" rel="noopener noreferrer">U.S. tightens controls on remote access to AI technology amid Nvidia fallout</a>
+                <p class="summary">The new rule closes a loophole that existed that allowed Chinese companies to still access advanced AI chips remotely, despite U.S. restrictions on their physical sale to China.</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">22</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042548/un-killer-robots-ai-weapons-drones" target="_blank" rel="noopener noreferrer">U.N. talks seek to rein in &#x27;killer robots&#x27; as fears over AI weapons grow</a>
+                <p class="summary">Countries are meeting in Geneva to negotiate rules on weapons that can select and kill targets without human intervention. But with the U.S., Russia and Israel resisting legally bi…</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">23</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMirAFBVV95cUxONGJmTGhQa3FRRDZtX3BqVk9SNlc1aHZ1QXZiUXdHMmlmZmdyUjFKS0hrREM1OFRrVDVjUGpSWnZfVTEtdlozVHVDc0h5Rld1cGVKQTFGYzVZOGJMdDNheWdEcFRhakxCVW1xcnQ3VHBzS2lRdWNPTGdtUkNxNVRnT1JUVzVKNzRXUlNuLUtBOVk2REZnZjMySER5NmhfNTliRjZsZ3B5TElrN0JU?oc=5" target="_blank" rel="noopener noreferrer">Trump administration moves to block China from indirect access to American AI technology - AP News</a>
+                <p class="summary">Trump administration moves to block China from indirect access to American AI technology  AP News</p>
+                <div class="meta"><span>AP News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">24</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxPSjlaZkpPNkEtbkFFT0ViblR2UkVybVVoNDd4bk1YZWttWFB3X01vZ1B1dGdqYjRXMGdyQ2VPdEh6bnpXWUthUlMtaUMtZWNyVTZic3l0ZDJSa1Y5WWp5V1VFUVlDSVFoMDZObVI2UHNPeEZnTG5fdHo5ak5TdDBtNHp1cWh4RXR0T21N?oc=5" target="_blank" rel="noopener noreferrer">Five European Countries Plan to Deport Migrants to Rwanda - The New York Times</a>
+                <p class="summary">Five European Countries Plan to Deport Migrants to Rwanda  The New York TimesFive EU countries announce migrant deportation centre in Rwanda  BBC5 European countries aim to send re…</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">25</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
+                <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">26</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
+                <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">27</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/videos/cmd91xjd9zk2o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">When will we see Robert Pattinson as Bond in cinemas?</a>
+                <p class="summary">Robert Pattinson has been announced as the next James Bond, becoming the seventh actor to take up the mantle of 007.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">28</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
+                <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">29</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
+                <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">30</span>
+            <div>
+                <a class="item-link" href="https://www.bbc.co.uk/news/articles/ckx27v6dpjz0o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Landmark Crimea bridge hit as Russia reports biggest Ukrainian drone attack of war</a>
+                <p class="summary">Russia said Ukraine had launched over 2,000 drones over the course of a day, while Kyiv came under a record 17 air raid alerts.</p>
+                <div class="meta"><span>BBC World</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">31</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMixAFBVV95cUxOeGdLdTNyR0RMOGZJN2JpeEFfeXJfRXBXWG1OU3FPZkVrelVvUnVSaUF0SjVmRzMweXhjbXZlVUpianQ3TU9FUW1HWjM4Q3FxTDlLX3FwbUZtQXRFOWp5dEhxc0RiY1hMWFl4Mm43UnFpeTJQQWMwUFNWOWh3RlNYb2F4a3kzLUVqV0JZc0NFTjA3ZEFrenludXJBLUY5VHJMeEJpSnRCbTVWQWJ3emgtMzZIRlpuOVZ6NE11NmVGdG5HSHFn0gHMAUFVX3lxTFBDRTZPOGdvLVdOQm5mX3VQZUtTZjBhQ2FxbVJ1S2JaTXZmT3pNTFpGRE9FLUo0WWNsX1hKQnBGUVBab3VUVEd5NWFqeGxTQXZ2ZUNWNk1QelNGOFVISlBja05tR2FtRFRuUEI1bERSby1ncUp1R2J4X1NPblNCSUJEcmdoajZ0N0pmVXNWZ3k5Z2s4Wm9wM3ZxbkZxb29SekFsQmVCM2VXT1B0OEdfQUJ5VU4tQ19CQVF0WGNES056aFVJWUM5T2JtSGYxRg?oc=5" target="_blank" rel="noopener noreferrer">What is happening on Nov. 17? What to expect as FEMA prepares for nationwide test - NBC 5 Chicago</a>
+                <p class="summary">What is happening on Nov. 17? What to expect as FEMA prepares for nationwide test  NBC 5 Chicago‘This is only a test’: Tuesday’s emergency alert test comes at anxious moment in the…</p>
+                <div class="meta"><span>Google News</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">32</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/g-s1-153841/up-first-newsletter-faa-ground-stop-democratic-leaders-congress-trump-asia-trip" target="_blank" rel="noopener noreferrer">FAA ground stop still affecting thousands of flights. And, Trump meets Xi, Putin in Asia</a>
+                <p class="summary">U.S. Transportation Secretary Sean Duffy said that things could be back to normal at the end of Monday after an FAA ground stop disrupted flights. And, Trump heads to Asia for a hi…</p>
+                <div class="meta"><span>NPR Politics</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">33</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6041644/air-traffic-controllers-union-head-on-the-nationwide-ground-stop" target="_blank" rel="noopener noreferrer">Air traffic controllers&#x27; union head on the nationwide ground stop</a>
+                <p class="summary">NPR&#x27;s Steve Inskeep asks the head of the air traffic controllers&#x27; union what it was like for controllers as the FAA issued a nationwide ground stop.</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">34</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6034048/snap-san-diego-food-assistance" target="_blank" rel="noopener noreferrer">They saw people losing food benefits. So they started handing out free groceries</a>
+                <p class="summary">The cuts and changes to SNAP have been difficult for government workers who take pride in helping others. In San Diego, workers said they couldn&#x27;t sit back while their neighbors we…</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">35</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6020923/arctic-bird-migration-alaska-climate-change" target="_blank" rel="noopener noreferrer">These birds fly 17,000 miles every year. Climate change could make it harder</a>
+                <p class="summary">Migratory birds cross the entire globe, carefully timing their journeys with the seasons. In a hotter climate, that timing is increasingly out of sync.</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li>
+<li class="item">
+            <span class="idx">36</span>
+            <div>
+                <a class="item-link" href="https://www.npr.org/2026/11/13/nx-s1-6034941/affordability-childcare-midterms" target="_blank" rel="noopener noreferrer">Affordability was a key issue for midterm voters. It helped make childcare one, too</a>
+                <p class="summary">Childcare costs have surged, putting a major financial burden on U.S. families. Advocates say the subject once on the fringes of political debate became a major issue during the mi…</p>
+                <div class="meta"><span>NPR National</span></div>
+            </div>
+        </li></ul>
+            </section><section class="tile tall" id="tile-tech">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">◆</span>Tech<span class="count">18 stories</span></div>
+                    <div class="tile-blurb">Tech news &amp; the top 5–10 tech companies</div>
                 </div>
                 <ul class="items"><li class="item">
             <span class="idx">01</span>
@@ -694,10 +697,10 @@
                 <div class="meta"><span>TechCrunch</span></div>
             </div>
         </li></ul>
-            </section><section class="panel" id="panel-home">
-                <div class="panel-head">
-                    <div class="panel-title">Home Front</div>
-                    <div class="panel-blurb">Parenting teens &amp; college kids, caring for aging parents</div>
+            </section><section class="tile short" id="tile-home">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">●</span>Home Front<span class="count">6 stories</span></div>
+                    <div class="tile-blurb">Parenting teens &amp; college kids, caring for aging parents</div>
                 </div>
                 <ul class="items"><li class="item">
             <span class="idx">01</span>
@@ -747,30 +750,19 @@
                 <div class="meta"><span>NPR Life Kit</span></div>
             </div>
         </li></ul>
-            </section><section class="panel" id="panel-career">
-                <div class="panel-head">
-                    <div class="panel-title">Career &amp; Growth</div>
-                    <div class="panel-blurb">Mid-career, leadership, communication</div>
+            </section><section class="tile short" id="tile-career">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">▶</span>Career &amp; Growth<span class="count"></span></div>
+                    <div class="tile-blurb">Mid-career, leadership, communication</div>
                 </div>
                 <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
-            </section><section class="panel" id="panel-outdoors">
-                <div class="panel-head">
-                    <div class="panel-title">Outdoors</div>
-                    <div class="panel-blurb">Hiking news &amp; trail reports</div>
+            </section><section class="tile short" id="tile-outdoors">
+                <div class="tile-head">
+                    <div class="tile-title"><span class="glyph">▽</span>Outdoors<span class="count"></span></div>
+                    <div class="tile-blurb">Hiking news &amp; trail reports</div>
                 </div>
                 <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
             </section></main>
 <footer>Refreshed automatically once a day via GitHub Actions.</footer>
-<script>
-  function showSection(id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('panel-' + id).classList.add('active');
-    document.querySelector('.tab-btn[data-target="' + id + '"]').classList.add('active');
-    localStorage.setItem('ts-news-active-tab', id);
-  }
-  const saved = localStorage.getItem('ts-news-active-tab') || 'world';
-  showSection(saved);
-</script>
 </body>
 </html>
