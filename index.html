@@ -5,88 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T's News Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;0,6..72,800;1,6..72,400&family=Libre+Franklin:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* Broadsheet: light newsprint, ink-black serif headlines, hairline rules, one red accent. */
   :root {
-    --bg: #0F1614; --surface: #16201C; --surface2: #1D2A25; --border: #2A3530;
-    --text: #E8E4DA; --muted: #9AA79E; --muted2: #7E8B84;
-    --amber: #C08A3E; --sage: #5C7A6E;
+    --paper: #F4F1EA; --ink: #141414; --rule: #1A1A1A; --hair: #D9D4CA;
+    --muted: #4A4743; --muted2: #6B6762; --faint: #8A857D; --red: #B3261E;
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --sans: 'Libre Franklin', system-ui, -apple-system, sans-serif;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-  }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  a { color: inherit; }
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 24px 24px 18px; max-width: 1360px; margin: 0 auto;
+    max-width: 1360px; margin: 0 auto; padding: 22px 24px 16px;
+    border-bottom: 3px double var(--rule); text-align: center;
+  }
+  .head-row { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .updated {
+    order: -1; font-size: 11px; letter-spacing: .04em; color: var(--muted2);
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 3px 14px;
   }
   h1 {
-    font-family: 'Fraunces', serif; font-weight: 700;
-    font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em;
+    font-family: var(--serif); font-weight: 800; margin: 0; line-height: 1.05;
+    font-size: clamp(34px, 5vw, 56px); letter-spacing: -0.02em;
   }
-  .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
-  .updated { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted); }
-  .head-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .home-link { text-decoration: none; }
+  .sub { margin: 6px auto 0; font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--muted); }
   main {
-    max-width: 1360px; margin: 0 auto; padding: 20px 24px 48px;
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+    max-width: 1360px; margin: 0 auto; padding: 18px 24px 48px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .tile {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
   }
+  .tile:nth-child(3n+1) { border-left: 1px solid var(--rule); }
+  .tile:nth-child(-n+3) { border-top: 1px solid var(--rule); }
   .tile.tall { height: 76vh; min-height: 560px; }
   .tile.short { height: 340px; }
-  .tile-head {
-    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
-    background: var(--surface2); flex-shrink: 0;
-  }
+  .tile-head { padding: 14px 16px 10px; border-bottom: 2px solid var(--rule); flex-shrink: 0; }
   .tile-title {
-    font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
+    font-family: var(--serif); font-size: 24px; font-weight: 700;
+    display: flex; align-items: baseline; gap: 8px;
   }
-  .tile-title .glyph { color: var(--amber); font-size: 14px; }
-  .tile-title .count {
-    margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    font-weight: 400; color: var(--sage);
-  }
-  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 3px; }
+  .tile-title .glyph { display: none; }
+  .tile-link { text-decoration: none; }
+  .tile-link:hover, .home-link:hover, .item-link:hover { color: var(--red); }
+  .tile-title .count { margin-left: auto; font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--red); }
+  .tile-blurb { font-size: 12px; color: var(--muted2); margin-top: 2px; }
   ul.items {
     list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1;
-    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    scrollbar-width: thin; scrollbar-color: #C9C3B8 transparent;
   }
-  .item { border-bottom: 1px solid #1E2622; padding: 12px 0; display: flex; gap: 10px; }
+  .item { border-bottom: 1px solid var(--hair); padding: 12px 0; display: flex; gap: 10px; }
   .item:last-child { border-bottom: none; }
-  .idx {
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage);
-    min-width: 20px; padding-top: 3px;
-  }
-  .item-link {
-    color: var(--text); text-decoration: none; font-family: 'Fraunces', serif;
-    font-size: 15px; font-weight: 600; line-height: 1.3;
-  }
-  .item-link:hover { color: var(--amber); }
+  .idx { font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--red); min-width: 22px; line-height: 1.3; }
+  .item-link { text-decoration: none; font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.25; }
+  .item:first-child .item-link { font-size: 21px; line-height: 1.18; }
   .summary {
-    margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
+    margin: 5px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .meta { margin-top: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sage); }
-  .empty { color: var(--muted2); font-size: 13px; padding: 20px 0; list-style: none; }
+  .meta { margin-top: 5px; font-size: 10.5px; letter-spacing: .03em; color: var(--faint); }
+  .empty { color: var(--muted2); font-family: var(--serif); font-style: italic; font-size: 14px; padding: 20px 0; list-style: none; }
   footer {
-    border-top: 1px solid var(--border); padding: 14px 20px; text-align: center;
-    font-size: 12px; color: var(--sage); font-family: 'IBM Plex Mono', monospace;
+    max-width: 1360px; margin: 0 auto; border-top: 3px double var(--rule);
+    padding: 14px 20px; text-align: center; font-size: 12px; color: var(--muted2);
   }
   /* Narrow windows: keep three side-by-side columns, just tighter. */
   @media (max-width: 1000px) {
-    header { padding: 18px 14px 14px; }
-    main { gap: 10px; padding: 14px 12px 32px; }
+    header { padding: 16px 12px 12px; }
+    main { padding: 12px 10px 32px; }
     .tile-head { padding: 10px 10px 8px; }
-    .tile-title { font-size: 16px; }
-    .tile-title .count, .tile-blurb { display: none; }
+    .tile-title { font-size: 18px; }
+    .tile-blurb { display: none; }
     ul.items { padding: 0 10px; }
     .idx { display: none; }
-    .item-link { font-size: 13.5px; }
+    .item-link { font-size: 14px; }
+    .item:first-child .item-link { font-size: 16px; }
     .summary { font-size: 12px; -webkit-line-clamp: 3; }
     .tile.tall { height: 72vh; min-height: 460px; }
     .tile.short { height: 300px; }
@@ -94,6 +91,8 @@
   /* Phones only: too narrow for three readable columns, so stack. */
   @media (max-width: 560px) {
     main { grid-template-columns: 1fr; }
+    .tile { border-left: 1px solid var(--rule); }
+    .tile:nth-child(n+2) { border-top: none; }
     .tile.tall { height: 70vh; min-height: 0; }
   }
 </style>
@@ -101,14 +100,14 @@
 <body>
 <header>
   <div class="head-row">
-    <h1>T&rsquo;s News Agent</h1>
-    <span class="updated">Updated Nov 17, 2026 05:05 UTC</span>
+    <h1><a class="home-link" href="https://tsingsgits.github.io/ts-news-agent/">T&rsquo;s News Agent</a></h1>
+    <span class="updated">Updated Nov 17, 2026 05:18 UTC</span>
   </div>
   <p class="sub">A daily field brief across the fronts that matter &mdash; markets, tech, home, and the trail.</p>
 </header>
 <main><section class="tile tall" id="tile-markets">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">▲</span>Markets<span class="count">18 stories</span></div>
+                    <div class="tile-title"><span class="glyph">▲</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-markets">Markets</a><span class="count">18 stories</span></div>
                     <div class="tile-blurb">US stock market, tech stocks, investment advice</div>
                 </div>
                 <ul class="items"><li class="item">
@@ -257,27 +256,19 @@
         </li></ul>
             </section><section class="tile tall" id="tile-world">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">◈</span>World &amp; US<span class="count">36 stories</span></div>
+                    <div class="tile-title"><span class="glyph">◈</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-world">World &amp; US</a><span class="count">30 stories</span></div>
                     <div class="tile-blurb">World news, US news, US politics</div>
                 </div>
                 <ul class="items"><li class="item">
             <span class="idx">01</span>
             <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMikAFBVV95cUxOcGw5a2lMb1B2bEtyYWotSkJYcWhXNHN2R3lwQlNuSUxfSHB5VzJ4Y25wNjZvcnVMLWhlN01rNnM3LXo2OHVScndJZm5VRWhjVFNrNnJZZDRhdEpoSThDelpzbDJlMTB0QXZ2al9FLWFkS3JTU1FfaFpBVkp1X2lrMU93bU5FbzlIQl9qbzFQLXE?oc=5" target="_blank" rel="noopener noreferrer">Trump’s Asia trip: Deals in Manila and Shenzhen, nuclear summit with Xi and Putin, maybe Kim meeting - AP News</a>
-                <p class="summary">Trump’s Asia trip: Deals in Manila and Shenzhen, nuclear summit with Xi and Putin, maybe Kim meeting  AP NewsUS to curb China&#x27;s access to AI chips as Trump heads to Asia  ReutersWo…</p>
-                <div class="meta"><span>Google News</span></div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMirAFBVV95cUxONGJmTGhQa3FRRDZtX3BqVk9SNlc1aHZ1QXZiUXdHMmlmZmdyUjFKS0hrREM1OFRrVDVjUGpSWnZfVTEtdlozVHVDc0h5Rld1cGVKQTFGYzVZOGJMdDNheWdEcFRhakxCVW1xcnQ3VHBzS2lRdWNPTGdtUkNxNVRnT1JUVzVKNzRXUlNuLUtBOVk2REZnZjMySER5NmhfNTliRjZsZ3B5TElrN0JU?oc=5" target="_blank" rel="noopener noreferrer">Trump administration moves to block China from indirect access to American AI technology - AP News</a>
+                <p class="summary">Trump administration moves to block China from indirect access to American AI technology  AP News</p>
+                <div class="meta"><span>AP News</span></div>
             </div>
         </li>
 <li class="item">
             <span class="idx">02</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiW0FVX3lxTE1vbXFXUWsxanRDclZUbV9abTdzc2VfT0xBSjU1d0JDUGI4bUVRZ0Ryc2dweWRoOVF5b2o0bGlkbkdXXzd1S2sxdFRtWnNQUnIyZktFMzg5dlJCUUk?oc=5" target="_blank" rel="noopener noreferrer">Trump says Alaska voters chose the wrong Dan Sullivan. What does the data show? - BBC</a>
-                <p class="summary">Trump says Alaska voters chose the wrong Dan Sullivan. What does the data show?  BBCPeltola expands lead over Sullivan in latest ballot drop  The HillAlaska Senate race heads for D…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">03</span>
             <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/articles/cry49plv8v3go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Nvidia dismisses &#x27;Bring Jensen Back&#x27; campaign as Trump backs effort to reinstate ex CEO</a>
                 <p class="summary">A number of tech figures have backed an effort asking the AI chip giant to give Jensen Huang his job back.</p>
@@ -285,18 +276,26 @@
             </div>
         </li>
 <li class="item">
+            <span class="idx">03</span>
+            <div>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMi2AFBVV95cUxQWWpicmlwLVlBRmlDY1dDT20wcGhhc2FqX1UtWjNpX0R1a0p3T0toZWRPalBZRUY3aGZKUGQ3Y0lYOW0xV1c5aUs2SnBOUFVqUWpiRlIxZWFMSTNCalJuV2pSVFBJZl9iT2o0VUJBY080a0NqVUNBak1pOVA3dFdwbk5OcV9oc0ZjWkN2cEtXS1VDTjhrQ2VUcFV4SmxkQkgzSG1TUTlnRVJYUGQ4dmVhR0dka0t6b2RzOHptakdFQW8xa1ZSTUg0OWZJd1lUTkFrMDlGRjM2eEo?oc=5" target="_blank" rel="noopener noreferrer">Tokyo lodges protest after aircraft believed to be Russian violate Japan airspace - Reuters</a>
+                <p class="summary">Tokyo lodges protest after aircraft believed to be Russian violate Japan airspace  Reuters</p>
+                <div class="meta"><span>Reuters</span></div>
+            </div>
+        </li>
+<li class="item">
             <span class="idx">04</span>
             <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMimAFBVV95cUxQanVrQ2NXVWVWRU9LUEZKRVgtajRQRExtNmF1Vzd1dl9YUUhiZTFuX1BfSVI1NEdKUkFWRS0taUN3SmpTU2pCMWhqU2Q0eVlUaW81ZFpGR1dNMWZmaTVZZk9hQmd3WElQd0hTQ003Q3NnaWlxaDFjMVdfN01QSEhPTVlISjFRUnhacjdiaTBsZlI3alVrRDBORQ?oc=5" target="_blank" rel="noopener noreferrer">Horns and drones banned as Shenzhen hushes for Trump and APEC - Reuters</a>
-                <p class="summary">Horns and drones banned as Shenzhen hushes for Trump and APEC  Reuters</p>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxPb0Z6TDRSbVp3QXhMLUlLR3Vaam5aam1wVW9LV2tGSmJPZVFaU2dCNnhzVjJSY25lNWR3N1lmOFVPeno3UWpkamE2SDVxOVVfcUxUY0RxYTd5cm8wYzg0M1FVZTdrVXU2RXJzbXFmNElPb0ZqVVJ2WUxhS1B5WXVhRFFobUJPb2FaNzdsdlFkNmludUtnSXY3eUJoZ0J5UXFJdTlQUVhR?oc=5" target="_blank" rel="noopener noreferrer">US dollar hits 19-month peak on Fed hike bets; Aussie dips - Reuters</a>
+                <p class="summary">US dollar hits 19-month peak on Fed hike bets; Aussie dips  Reuters</p>
                 <div class="meta"><span>Reuters</span></div>
             </div>
         </li>
 <li class="item">
             <span class="idx">05</span>
             <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxPb0Z6TDRSbVp3QXhMLUlLR3Vaam5aam1wVW9LV2tGSmJPZVFaU2dCNnhzVjJSY25lNWR3N1lmOFVPeno3UWpkamE2SDVxOVVfcUxUY0RxYTd5cm8wYzg0M1FVZTdrVXU2RXJzbXFmNElPb0ZqVVJ2WUxhS1B5WXVhRFFobUJPb2FaNzdsdlFkNmludUtnSXY3eUJoZ0J5UXFJdTlQUVhR?oc=5" target="_blank" rel="noopener noreferrer">US dollar hits 19-month peak on Fed hike bets; Aussie dips - Reuters</a>
-                <p class="summary">US dollar hits 19-month peak on Fed hike bets; Aussie dips  Reuters</p>
+                <a class="item-link" href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxPQm40d1ZiR2k1S1RxaFdvQzJVYmRJUE1rcnNLZkEyRkZzbk5KZjlqWl9sZW9MUFB2OHpwdGZzT3duNzVnMnNaMEJMYkFKWndKTWE1OWNtd0hLcWRtSmVVYU5JaTBlNXZuT2t0V1AzVHdXVEhPMWt5QnhXakxpWkxiQk50ZEt0UGtXT3RpeXdiNEY0UXBqeXk2RGVHYURMNzJzNm13Zldtbm8tQQ?oc=5" target="_blank" rel="noopener noreferrer">Oil slips as recovering Mideast exports blunt Gulf tensions - Reuters</a>
+                <p class="summary">Oil slips as recovering Mideast exports blunt Gulf tensions  Reuters</p>
                 <div class="meta"><span>Reuters</span></div>
             </div>
         </li>
@@ -343,37 +342,13 @@
 <li class="item">
             <span class="idx">11</span>
             <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNbEt5Qmw1b2g3dmlvTmZ4ME9CeWt4RlBadWs3UTdNYkNJTExyX2JPRXJYZy04SndvUjFSUi1wZFdBM0IxdFpTbHI3Y1R6aU9yeExuRmJSU0lyT2d1TGlDWnFZYVI1ZlFnWE5ZM1Jxb1U3VURrVkhEaW1yeWxWNkVxVGlSb3VUY05CbkhabUc1ZGZWNkRWa2ZjTE5RTGI0T1Q4UWdBMjNn?oc=5" target="_blank" rel="noopener noreferrer">Trump bristles at criticism over grounding of planes, blaming old tech and Biden for the problems - AP News</a>
-                <p class="summary">Trump bristles at criticism over grounding of planes, blaming old tech and Biden for the problems  AP NewsShowdown looms between Trump and Democrats over air traffic control meltdo…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">12</span>
-            <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/articles/cw987343352go?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Five EU countries announce migrant deportation centre in Rwanda</a>
                 <p class="summary">Germany, Denmark, Austria, Greece and the Netherlands have announced a &quot;return hub&quot; for failed asylum seekers.</p>
                 <div class="meta"><span>BBC World</span></div>
             </div>
         </li>
 <li class="item">
-            <span class="idx">13</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMie0FVX3lxTE03SEs1dzdtOVl4RVo4TjcxOHpLMmpKZlZ4cGFCQjQtMnV3OWhMSnhvemduUWxJSnlYYWstUk5PYURBSmxLQ2VDY3NyUG9fNXhDTlRwSDFEVFNCN29vWWtOaWRhTDlPYk04TThPOTREX2FVSzhZdEExSVVyQQ?oc=5" target="_blank" rel="noopener noreferrer">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say - CNN</a>
-                <p class="summary">Exclusive: US intel indicates Iran developing plans to potentially detonate a dirty bomb in Washington, sources say  CNNWhite House Says ‘No Credible Threat’ After Iran Dirty Bomb …</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">14</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMirwFBVV95cUxPV0JVRTluN1llSzlnQ3d2ZDRDSFYxYkU4OGhkRUwxWFEwWGNJWlIxaUxSNHVSU1Q2bXJjRkRCbnJZV3U4cHY4WXJvZWJGMG5wdTFkck5Pck9PRVl2TGpoQkZPTDVKS2g5T3kzQ0dCSmdrWm1LaWZaa3RKcFNtekRmdmhpNTBaUWVtMkxvdUhFQ2VET3p2Y2lKdFdRZloyS2p4ZnZQTnZJNVE1OTlpc2dn?oc=5" target="_blank" rel="noopener noreferrer">United Airlines says technology outage that delayed departures has been resolved - Reuters</a>
-                <p class="summary">United Airlines says technology outage that delayed departures has been resolved  Reuters</p>
-                <div class="meta"><span>Reuters</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">15</span>
+            <span class="idx">12</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042920/california-sues-openai-hugging-face-hacking-incident" target="_blank" rel="noopener noreferrer">California sues OpenAI over hacking risks</a>
                 <p class="summary">The state&#x27;s attorney general started investigating OpenAI after the Hugging Face attack and now says this attack was &quot;entirely foreseeable&quot; due to OpenAI&#x27;s poor security practices.…</p>
@@ -381,7 +356,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">16</span>
+            <span class="idx">13</span>
             <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/articles/cmy97qperq9eo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Houthi rebel advance in Yemen may further destabilise global economy</a>
                 <p class="summary">The Iran-backed Houthis are gaining ground and their advance could have dangerous consequences, writes the BBC&#x27;s security correspondent.</p>
@@ -389,7 +364,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">17</span>
+            <span class="idx">14</span>
             <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/articles/c5n4exg1kkmyo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Forensic expert says his analysis of autopsy photos suggests Epstein was killed</a>
                 <p class="summary">Professor Michael Freeman tells BBC Newsnight that he believes the convicted sex offender&#x27;s injuries are consistent with a homicide.</p>
@@ -397,7 +372,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">18</span>
+            <span class="idx">15</span>
             <div>
                 <a class="item-link" href="https://news.google.com/rss/articles/CBMipgFBVV95cUxNSFM1anhXXzhKZlJuOU9wdWtZcGt5ZVVNclJ4am01NXJrTGJPeTRkZGlZZ252Zk9RWjVmTlRlQzZBVTJ5cmhKUG00TF9lWXp3N0xiNzVNUWZIRFVGRUtmNzNXZ0lfYVo5ZDM3OS00d1BuR3I4a1I5YlJEeGZVSTA0YUVSWXZ4WFFES0hQeFNYTGpmUGZuQk1rRXZjLWVhZmhCNzdDVDNn?oc=5" target="_blank" rel="noopener noreferrer">Doctors are raising concerns about US babies born with measles - AP News</a>
                 <p class="summary">Doctors are raising concerns about US babies born with measles  AP News</p>
@@ -405,7 +380,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">19</span>
+            <span class="idx">16</span>
             <div>
                 <a class="item-link" href="https://news.google.com/rss/articles/CBMimwFBVV95cUxNNVlEQlFmLS1NdUs1bFBhb0lMMkMzbFQ4b3RmdVFRQUpqTUc3QjBOWGxYZmZXWlBzR1g3aDFJX0pla08xMmVfcUc3SlFVb0NRQnFyZHhEektyZnNtdmdOTGttYjI1YldCNEFvOWhMdHdZM2M5TjhVcjJRWkFBWl82d1o1YzRFQ1dJMmR2Mm9BaGNvbVNTVG53MXBOaw?oc=5" target="_blank" rel="noopener noreferrer">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding - AP News</a>
                 <p class="summary">Scrutiny of FAA intensifies after communications meltdown leads to nationwide grounding  AP News</p>
@@ -413,7 +388,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">20</span>
+            <span class="idx">17</span>
             <div>
                 <a class="item-link" href="https://news.google.com/rss/articles/CBMif0FVX3lxTFA3WVdwdnRSYW5oWmtlN1hsVXVZUV91UVR3bi02WEdFYXV0cHAyckFqNGhhRjVmWjZaWlNQYW5VM185akwyZjgzQmFhZzZWVlFoY3FUcXNmbmNObmNOQWlxUGVmc19kNXJmZmlqcW84V280ajE1d0RZWVFPczlKVXM?oc=5" target="_blank" rel="noopener noreferrer">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig - AP News</a>
                 <p class="summary">Robert Pattinson is named the seventh James Bond, taking over from Daniel Craig  AP News</p>
@@ -421,7 +396,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">21</span>
+            <span class="idx">18</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042883/nvidia-jensen-huang-commerce-department" target="_blank" rel="noopener noreferrer">U.S. tightens controls on remote access to AI technology amid Nvidia fallout</a>
                 <p class="summary">The new rule closes a loophole that existed that allowed Chinese companies to still access advanced AI chips remotely, despite U.S. restrictions on their physical sale to China.</p>
@@ -429,7 +404,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">22</span>
+            <span class="idx">19</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042548/un-killer-robots-ai-weapons-drones" target="_blank" rel="noopener noreferrer">U.N. talks seek to rein in &#x27;killer robots&#x27; as fears over AI weapons grow</a>
                 <p class="summary">Countries are meeting in Geneva to negotiate rules on weapons that can select and kill targets without human intervention. But with the U.S., Russia and Israel resisting legally bi…</p>
@@ -437,23 +412,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">23</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMirAFBVV95cUxONGJmTGhQa3FRRDZtX3BqVk9SNlc1aHZ1QXZiUXdHMmlmZmdyUjFKS0hrREM1OFRrVDVjUGpSWnZfVTEtdlozVHVDc0h5Rld1cGVKQTFGYzVZOGJMdDNheWdEcFRhakxCVW1xcnQ3VHBzS2lRdWNPTGdtUkNxNVRnT1JUVzVKNzRXUlNuLUtBOVk2REZnZjMySER5NmhfNTliRjZsZ3B5TElrN0JU?oc=5" target="_blank" rel="noopener noreferrer">Trump administration moves to block China from indirect access to American AI technology - AP News</a>
-                <p class="summary">Trump administration moves to block China from indirect access to American AI technology  AP News</p>
-                <div class="meta"><span>AP News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">24</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxPSjlaZkpPNkEtbkFFT0ViblR2UkVybVVoNDd4bk1YZWttWFB3X01vZ1B1dGdqYjRXMGdyQ2VPdEh6bnpXWUthUlMtaUMtZWNyVTZic3l0ZDJSa1Y5WWp5V1VFUVlDSVFoMDZObVI2UHNPeEZnTG5fdHo5ak5TdDBtNHp1cWh4RXR0T21N?oc=5" target="_blank" rel="noopener noreferrer">Five European Countries Plan to Deport Migrants to Rwanda - The New York Times</a>
-                <p class="summary">Five European Countries Plan to Deport Migrants to Rwanda  The New York TimesFive EU countries announce migrant deportation centre in Rwanda  BBC5 European countries aim to send re…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">25</span>
+            <span class="idx">20</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
                 <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
@@ -461,7 +420,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">26</span>
+            <span class="idx">21</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6042432/nearly-two-million-people-are-behind-bars-in-the-us-how-did-we-get-here" target="_blank" rel="noopener noreferrer">Nearly two million people are behind bars in the US. How did we get here?</a>
                 <p class="summary">Lynn Novick&#x27;s new, four-part PBS documentary series, Crime and Punishment in America, goes inside the U.S. prison system and explores how our approach to criminals has changed over…</p>
@@ -469,7 +428,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">27</span>
+            <span class="idx">22</span>
             <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/videos/cmd91xjd9zk2o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">When will we see Robert Pattinson as Bond in cinemas?</a>
                 <p class="summary">Robert Pattinson has been announced as the next James Bond, becoming the seventh actor to take up the mantle of 007.</p>
@@ -477,7 +436,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">28</span>
+            <span class="idx">23</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
                 <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
@@ -485,7 +444,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">29</span>
+            <span class="idx">24</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-5983473/clancy-trial-retrial-murder-charges" target="_blank" rel="noopener noreferrer">Lindsay Clancy to face a new trial in spring of 2027 over children&#x27;s killing</a>
                 <p class="summary">A new trial is set in Massachusetts against Lindsay Clancy as prosecutors seek a criminal conviction over the killing of her three young children.</p>
@@ -493,7 +452,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">30</span>
+            <span class="idx">25</span>
             <div>
                 <a class="item-link" href="https://www.bbc.co.uk/news/articles/ckx27v6dpjz0o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener noreferrer">Landmark Crimea bridge hit as Russia reports biggest Ukrainian drone attack of war</a>
                 <p class="summary">Russia said Ukraine had launched over 2,000 drones over the course of a day, while Kyiv came under a record 17 air raid alerts.</p>
@@ -501,15 +460,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">31</span>
-            <div>
-                <a class="item-link" href="https://news.google.com/rss/articles/CBMixAFBVV95cUxOeGdLdTNyR0RMOGZJN2JpeEFfeXJfRXBXWG1OU3FPZkVrelVvUnVSaUF0SjVmRzMweXhjbXZlVUpianQ3TU9FUW1HWjM4Q3FxTDlLX3FwbUZtQXRFOWp5dEhxc0RiY1hMWFl4Mm43UnFpeTJQQWMwUFNWOWh3RlNYb2F4a3kzLUVqV0JZc0NFTjA3ZEFrenludXJBLUY5VHJMeEJpSnRCbTVWQWJ3emgtMzZIRlpuOVZ6NE11NmVGdG5HSHFn0gHMAUFVX3lxTFBDRTZPOGdvLVdOQm5mX3VQZUtTZjBhQ2FxbVJ1S2JaTXZmT3pNTFpGRE9FLUo0WWNsX1hKQnBGUVBab3VUVEd5NWFqeGxTQXZ2ZUNWNk1QelNGOFVISlBja05tR2FtRFRuUEI1bERSby1ncUp1R2J4X1NPblNCSUJEcmdoajZ0N0pmVXNWZ3k5Z2s4Wm9wM3ZxbkZxb29SekFsQmVCM2VXT1B0OEdfQUJ5VU4tQ19CQVF0WGNES056aFVJWUM5T2JtSGYxRg?oc=5" target="_blank" rel="noopener noreferrer">What is happening on Nov. 17? What to expect as FEMA prepares for nationwide test - NBC 5 Chicago</a>
-                <p class="summary">What is happening on Nov. 17? What to expect as FEMA prepares for nationwide test  NBC 5 Chicago‘This is only a test’: Tuesday’s emergency alert test comes at anxious moment in the…</p>
-                <div class="meta"><span>Google News</span></div>
-            </div>
-        </li>
-<li class="item">
-            <span class="idx">32</span>
+            <span class="idx">26</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/g-s1-153841/up-first-newsletter-faa-ground-stop-democratic-leaders-congress-trump-asia-trip" target="_blank" rel="noopener noreferrer">FAA ground stop still affecting thousands of flights. And, Trump meets Xi, Putin in Asia</a>
                 <p class="summary">U.S. Transportation Secretary Sean Duffy said that things could be back to normal at the end of Monday after an FAA ground stop disrupted flights. And, Trump heads to Asia for a hi…</p>
@@ -517,7 +468,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">33</span>
+            <span class="idx">27</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6041644/air-traffic-controllers-union-head-on-the-nationwide-ground-stop" target="_blank" rel="noopener noreferrer">Air traffic controllers&#x27; union head on the nationwide ground stop</a>
                 <p class="summary">NPR&#x27;s Steve Inskeep asks the head of the air traffic controllers&#x27; union what it was like for controllers as the FAA issued a nationwide ground stop.</p>
@@ -525,7 +476,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">34</span>
+            <span class="idx">28</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6034048/snap-san-diego-food-assistance" target="_blank" rel="noopener noreferrer">They saw people losing food benefits. So they started handing out free groceries</a>
                 <p class="summary">The cuts and changes to SNAP have been difficult for government workers who take pride in helping others. In San Diego, workers said they couldn&#x27;t sit back while their neighbors we…</p>
@@ -533,7 +484,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">35</span>
+            <span class="idx">29</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/16/nx-s1-6020923/arctic-bird-migration-alaska-climate-change" target="_blank" rel="noopener noreferrer">These birds fly 17,000 miles every year. Climate change could make it harder</a>
                 <p class="summary">Migratory birds cross the entire globe, carefully timing their journeys with the seasons. In a hotter climate, that timing is increasingly out of sync.</p>
@@ -541,7 +492,7 @@
             </div>
         </li>
 <li class="item">
-            <span class="idx">36</span>
+            <span class="idx">30</span>
             <div>
                 <a class="item-link" href="https://www.npr.org/2026/11/13/nx-s1-6034941/affordability-childcare-midterms" target="_blank" rel="noopener noreferrer">Affordability was a key issue for midterm voters. It helped make childcare one, too</a>
                 <p class="summary">Childcare costs have surged, putting a major financial burden on U.S. families. Advocates say the subject once on the fringes of political debate became a major issue during the mi…</p>
@@ -550,7 +501,7 @@
         </li></ul>
             </section><section class="tile tall" id="tile-tech">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">◆</span>Tech<span class="count">18 stories</span></div>
+                    <div class="tile-title"><span class="glyph">◆</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-tech">Tech</a><span class="count">18 stories</span></div>
                     <div class="tile-blurb">Tech news &amp; the top 5–10 tech companies</div>
                 </div>
                 <ul class="items"><li class="item">
@@ -699,7 +650,7 @@
         </li></ul>
             </section><section class="tile short" id="tile-home">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">●</span>Home Front<span class="count">6 stories</span></div>
+                    <div class="tile-title"><span class="glyph">●</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-home">Home Front</a><span class="count">6 stories</span></div>
                     <div class="tile-blurb">Parenting teens &amp; college kids, caring for aging parents</div>
                 </div>
                 <ul class="items"><li class="item">
@@ -752,13 +703,13 @@
         </li></ul>
             </section><section class="tile short" id="tile-career">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">▶</span>Career &amp; Growth<span class="count"></span></div>
+                    <div class="tile-title"><span class="glyph">▶</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-career">Career &amp; Growth</a><span class="count"></span></div>
                     <div class="tile-blurb">Mid-career, leadership, communication</div>
                 </div>
                 <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
             </section><section class="tile short" id="tile-outdoors">
                 <div class="tile-head">
-                    <div class="tile-title"><span class="glyph">▽</span>Outdoors<span class="count"></span></div>
+                    <div class="tile-title"><span class="glyph">▽</span><a class="tile-link" href="https://tsingsgits.github.io/ts-news-agent/#tile-outdoors">Outdoors</a><span class="count"></span></div>
                     <div class="tile-blurb">Hiking news &amp; trail reports</div>
                 </div>
                 <ul class="items"><li class="empty">No dispatches came through for this beat on the last run.</li></ul>
