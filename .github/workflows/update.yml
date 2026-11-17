@@ -2,8 +2,9 @@ name: Update T's News Agent
 
 on:
   schedule:
-    # 13:00 UTC daily = 6:00 AM PDT / 5:00 AM PST.
-    # Adjust the hour below if you want a different time.
+    # Primary trigger is a Claude scheduled task at 5:41 AM Pacific (workflow_dispatch).
+    # This GitHub schedule is only a backup: GitHub often starts it hours late, and the
+    # guard step below skips it if today's brief has already been built and emailed.
     - cron: '0 13 * * *'
   workflow_dispatch: {}   # lets you trigger a manual run from the Actions tab
 
@@ -16,19 +17,37 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
+
+      - name: Skip backup run if today's brief already went out
+        id: guard
+        if: github.event_name == 'schedule'
+        run: |
+          last=$(TZ=America/Los_Angeles git log -1 --format=%cd --date=format-local:%Y-%m-%d -- index.html)
+          today=$(TZ=America/Los_Angeles date +%Y-%m-%d)
+          echo "Last page build: $last (Pacific). Today: $today."
+          if [ "$last" = "$today" ]; then
+            echo "Already ran today; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Python
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
         run: pip install -r requirements.txt
 
       - name: Fetch feeds and build page
+        if: steps.guard.outputs.skip != 'true'
         run: python scripts/fetch_news.py
 
       - name: Commit and push if changed
+        if: steps.guard.outputs.skip != 'true'
         run: |
           git config user.name "news-agent-bot"
           git config user.email "actions@github.com"
@@ -37,6 +56,7 @@ jobs:
           git push
 
       - name: Email the page
+        if: steps.guard.outputs.skip != 'true'
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
