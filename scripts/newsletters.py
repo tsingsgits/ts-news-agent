@@ -75,6 +75,11 @@ BOILERPLATE = re.compile(
     r"^good morning|^hi |^hello|^welcome|^\W*$)"
 )
 
+# Welcome mail that slips past SKIP_SUBJECT is caught by its opening lines.
+WELCOME_BODY = re.compile(r"(?i)(thanks? (you )?for (signing up|subscribing|joining)|"
+                          r"welcome to (the )?|you('| a)re (now )?(subscribed|part of)|"
+                          r"confirm your (subscription|email))")
+
 VIEW_ONLINE = re.compile(r"(?i)(view (it )?(in|on) (your )?(browser|web)|view online|"
                          r"read online|read in browser|web version|view as (a )?web ?page)")
 
@@ -256,6 +261,11 @@ def fetch_newsletters():
                         continue
                     if nl["subject_must"] and not re.search(nl["subject_must"], subject):
                         continue
+                    body_html = _html_part(msg)
+                    opening = re.sub(r"\s+", " ", re.sub(r"<[^>]+>|&[#\w]+;", " ",
+                                     re.sub(r"(?is)<(style|script|head)\b.*?</\1>", " ", body_html)))[:700]
+                    if WELCOME_BODY.search(opening):
+                        continue
                     try:
                         when = email.utils.parsedate_to_datetime(msg.get("Date"))
                     except Exception:
@@ -263,12 +273,12 @@ def fetch_newsletters():
                     if when and when.tzinfo is None:
                         when = when.replace(tzinfo=datetime.timezone.utc)
                     if best is None or (when and best["when"] and when > best["when"]):
-                        best = {"msg": msg, "subject": subject, "when": when}
+                        best = {"msg": msg, "subject": subject, "when": when, "html": body_html}
                     break  # newest acceptable message for this pattern
             if best is None:
                 print(f"Newsletters: no recent issue of {nl['name']}.")
                 continue
-            parsed = parse_issue(_html_part(best["msg"]), best["subject"], nl["web_home"])
+            parsed = parse_issue(best["html"], best["subject"], nl["web_home"])
             issues.append({
                 "name": nl["name"],
                 "subject": best["subject"],
