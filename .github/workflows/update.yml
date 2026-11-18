@@ -44,6 +44,11 @@ jobs:
 
       - name: Fetch feeds and build page
         if: steps.guard.outputs.skip != 'true'
+        env:
+          # Inbox the market newsletters are delivered to (Gmail address + app password).
+          # If these secrets are missing, the Briefings tile just says it isn't connected.
+          NEWSLETTER_IMAP_USER: ${{ secrets.NEWSLETTER_IMAP_USER }}
+          NEWSLETTER_IMAP_PASSWORD: ${{ secrets.NEWSLETTER_IMAP_PASSWORD }}
         run: python scripts/fetch_news.py
 
       - name: Commit and push if changed

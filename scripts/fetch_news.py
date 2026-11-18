@@ -7,6 +7,8 @@ import datetime
 import html
 import feedparser
 
+from newsletters import fetch_newsletters, NEWSLETTERS
+
 SECTIONS = [
     {
         "id": "markets",
@@ -83,6 +85,20 @@ TOP_IDS = ("markets", "world", "tech")
 PAGE_URL = "https://tsingsgits.github.io/ts-news-agent/"
 
 MAX_PER_FEED = 6
+
+# Time zone used to show when each newsletter arrived.
+LOCAL_TZ = datetime.timezone(datetime.timedelta(hours=-8), "PT")
+
+
+def _when_local(when):
+    if not when:
+        return ""
+    try:
+        from zoneinfo import ZoneInfo
+        local = when.astimezone(ZoneInfo("America/Los_Angeles"))
+    except Exception:
+        local = when.astimezone(LOCAL_TZ)
+    return local.strftime("%a %-I:%M %p PT")
 
 
 def fetch_section_items(feeds):
@@ -209,6 +225,20 @@ STYLE_BLOCK = """<style>
     max-width: 1360px; margin: 0 auto; border-top: 3px double var(--rule);
     padding: 14px 20px; text-align: center; font-size: 12px; color: var(--muted2);
   }
+  /* Newsletter row: spans all three columns, one card per newsletter. */
+  .tile.wide { grid-column: 1 / -1; border-left: 1px solid var(--rule); }
+  .briefs { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .brief { padding: 14px 16px 16px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); min-width: 0; }
+  .brief-name { font-size: 11px; font-weight: 600; letter-spacing: .04em; color: var(--red); display: flex; justify-content: space-between; gap: 8px; }
+  .brief-name .when { color: var(--faint); font-weight: 400; letter-spacing: 0; white-space: nowrap; }
+  .brief-subject { display: block; margin-top: 6px; text-decoration: none; font-family: var(--serif); font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .brief-subject:hover { color: var(--red); }
+  .brief-intro { margin: 6px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .brief ul { margin: 8px 0 0; padding-left: 16px; }
+  .brief li { font-family: var(--serif); font-size: 14px; line-height: 1.3; margin: 4px 0; }
+  .brief li::marker { color: var(--red); }
+  .brief-empty { padding: 18px 16px; color: var(--muted2); font-family: var(--serif); font-style: italic; font-size: 14px; }
   /* Narrow windows: keep three side-by-side columns, just tighter. */
   @media (max-width: 1000px) {
     header { padding: 16px 12px 12px; }
@@ -244,10 +274,46 @@ def render_tile(s, items, size):
             </section>'''
 
 
-def render_html(sections_data, generated_at):
+BRIEFS_LABEL = "The Briefings"
+BRIEFS_BLURB = "Today\u2019s market newsletters: " + ", ".join(n["name"] for n in NEWSLETTERS)
+
+
+def _briefs_empty_text(issues):
+    if issues is None:
+        return "The newsletter inbox isn\u2019t connected yet."
+    return "No new newsletter issues in the last two days."
+
+
+def render_briefs_tile(issues):
+    if issues:
+        cards = []
+        for it in issues:
+            heads = "".join(f"<li>{html.escape(h)}</li>" for h in it["headlines"])
+            cards.append(f'''<article class="brief">
+                <div class="brief-name"><span>{html.escape(it['name'])}</span><span class="when">{_when_local(it['when'])}</span></div>
+                <a class="brief-subject" href="{html.escape(it['link'])}" target="_blank" rel="noopener">{html.escape(it['subject'])}</a>
+                {f'<p class="brief-intro">{html.escape(it["intro"])}</p>' if it["intro"] else ""}
+                {f"<ul>{heads}</ul>" if heads else ""}
+            </article>''')
+        body = f'<div class="briefs">{"".join(cards)}</div>'
+        count = f"{len(issues)} issues"
+    else:
+        body = f'<div class="brief-empty">{_briefs_empty_text(issues)}</div>'
+        count = ""
+    return f'''<section class="tile wide" id="tile-briefings">
+                <div class="tile-head">
+                    <div class="tile-title"><a class="tile-link" href="{PAGE_URL}#tile-briefings">{BRIEFS_LABEL}</a><span class="count">{count}</span></div>
+                    <div class="tile-blurb">{html.escape(BRIEFS_BLURB)}</div>
+                </div>
+                {body}
+            </section>'''
+
+
+def render_html(sections_data, generated_at, issues=None):
     top = [s for s in SECTIONS if s["id"] in TOP_IDS]
     bottom = [s for s in SECTIONS if s["id"] not in TOP_IDS]
     tiles = [render_tile(s, sections_data[s["id"]], "tall") for s in top]
+    tiles.append(render_briefs_tile(issues))
     tiles += [render_tile(s, sections_data[s["id"]], "short") for s in bottom]
 
     return f'''<!DOCTYPE html>
@@ -303,11 +369,45 @@ def build_rows_email(items):
     return "\n".join(row_parts)
 
 
-def render_email_html(sections_data, generated_at):
+def render_briefs_email(issues):
+    if issues:
+        rows = []
+        for i, it in enumerate(issues):
+            border = "" if i == len(issues) - 1 else "border-bottom:1px solid #D9D4CA;"
+            heads = "".join(
+                f'<li style="font-family:Georgia,serif;font-size:15px;line-height:1.35;margin:3px 0;">{html.escape(h)}</li>'
+                for h in it["headlines"])
+            rows.append(f'''<tr><td style="{border}padding:14px 0;">
+              <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;color:#B3261E;">{html.escape(it['name'])} <span style="color:#8A857D;font-weight:400;letter-spacing:0;">&middot; {_when_local(it['when'])}</span></div>
+              <a href="{html.escape(it['link'])}" style="display:block;margin-top:4px;color:#141414;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:18px;font-weight:700;line-height:1.25;">{html.escape(it['subject'])}</a>
+              {f'<p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#4A4743;line-height:1.5;">{html.escape(it["intro"])}</p>' if it["intro"] else ""}
+              {f'<ul style="margin:6px 0 0;padding-left:18px;color:#141414;">{heads}</ul>' if heads else ""}
+            </td></tr>''')
+        body = "".join(rows)
+        count_txt = f"{len(issues)} issues"
+    else:
+        body = ('<tr><td style="color:#6B6762;font-family:Georgia,serif;font-style:italic;font-size:14px;padding:16px 0;">'
+                + _briefs_empty_text(issues) + "</td></tr>")
+        count_txt = ""
+    return f'''<tr><td style="padding:22px 0 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr><td style="border-bottom:2px solid #1A1A1A;padding-bottom:6px;">
+          <a href="{PAGE_URL}#tile-briefings" style="color:#141414;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;">{BRIEFS_LABEL}</a>
+          <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#B3261E;padding-left:8px;">{count_txt} &#8599;</span>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6B6762;margin-top:2px;">{html.escape(BRIEFS_BLURB)}</div>
+        </td></tr>
+        {body}
+      </table>
+    </td></tr>'''
+
+
+def render_email_html(sections_data, generated_at, issues=None):
     """Email clients strip <script> and most <style>, so this variant stacks
     every section with table layout and inline styles, in the Broadsheet look."""
     blocks = []
     for s in SECTIONS:
+        if s["id"] == "home":
+            blocks.append(render_briefs_email(issues))
         rows = build_rows_email(sections_data[s["id"]])
         count = len(sections_data[s["id"]])
         count_txt = f"{count} stories" if count else ""
@@ -356,14 +456,17 @@ def main():
         print(f"Fetching {s['label']}...")
         sections_data[s["id"]] = fetch_section_items(s["feeds"])
 
+    print("Reading newsletters...")
+    issues = fetch_newsletters()
+
     generated_at = datetime.datetime.utcnow().strftime("%b %d, %Y %H:%M UTC")
 
-    out = render_html(sections_data, generated_at)
+    out = render_html(sections_data, generated_at, issues)
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(out)
     print("Wrote index.html")
 
-    email_out = render_email_html(sections_data, generated_at)
+    email_out = render_email_html(sections_data, generated_at, issues)
     with open("email.html", "w", encoding="utf-8") as f:
         f.write(email_out)
     print("Wrote email.html")
